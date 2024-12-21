@@ -1,0 +1,15 @@
+server:
+    port: ${BS_BACKEND_PORT:9175}
+    servlet:
+        context-path: /api
+frontend:
+    origin_url: http://localhost:5175
+    game_host_url: http://localhost:5175/battleship
+    external_assets:
+        base_url: http://localhost:5175
+bandit_sdk:
+    api_key: ${BS_SDK_APIKEY}
+    base_url:
+        game_registry: ${BS_SDK_GAMEREGISTRY:${BS_SDK_COMPLETE:http://localhost:8090/api}}
+        gameplay: ${BS_SDK_GAMEPLAY:${BS_SDK_COMPLETE:http://localhost:8090/api}}
+        statistics: ${BS_SDK_STATISTICS:${BS_SDK_COMPLETE:http://localhost:8090/api}}
