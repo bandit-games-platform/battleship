@@ -8,9 +8,6 @@ const resizeCanvas = (app: PIXI.Application, width: number, height: number) => {
         const viewStyle = app.renderer.view.style as CSSProperties;
         viewStyle.width = `${width * ratio}px`;
         viewStyle.height = `${height * ratio}px`;
-
-        viewStyle.marginTop = `${(window.innerHeight - height * ratio) / 2}px`;
-        viewStyle.marginLeft = `${(window.innerWidth - width * ratio) / 2}px`;
     }
 
     app.renderer.resize(window.innerWidth, window.innerHeight);
