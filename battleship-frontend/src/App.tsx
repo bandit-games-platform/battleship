@@ -1,11 +1,15 @@
+import {BrowserRouter, Route, Routes} from "react-router-dom";
+import {BattleshipGame} from "./page/BattleshipGame.tsx";
 
 function App() {
 
-  return (
-    <>
-      <h1>Here be battleships!</h1>
-    </>
-  )
+    return (
+        <BrowserRouter>
+            <Routes>
+                <Route path={"/battleship"} element={<BattleshipGame />} />
+            </Routes>
+        </BrowserRouter>
+    )
 }
 
 export default App
