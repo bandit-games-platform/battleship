@@ -1,30 +1,40 @@
-import {ReactNode, useEffect, useRef} from 'react';
+import {ReactNode, useEffect, useRef, useState} from 'react';
 import * as PIXI from 'pixi.js';
 import {AppContext} from "./AppContext.ts";
-import {resizeCanvas} from "../util/canvasUtils.ts";
 
 interface CanvasManagerProps {
     children: ReactNode;
 }
 
+const defaultWidth = 1600;
+const defaultHeight = 900;
+
 export function CanvasManager({children}: CanvasManagerProps) {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
-    const appRef = useRef<PIXI.Application | null>(null);
+    const [app, setApp] = useState<PIXI.Application | null>(null);
+    const [canvasSize, setCanvasSize] = useState<{width: number, height: number}>({width: window.innerWidth, height: window.innerHeight});
 
     useEffect(() => {
         if (!canvasRef.current) return;
 
         const app = new PIXI.Application({
             view: canvasRef.current,
-            width: 1600,
-            height: 900,
-            backgroundColor: 0x1099bb,
+            width: defaultWidth,
+            height: defaultHeight,
+            backgroundColor: 0xff00ff,
         });
 
-        appRef.current = app;
+        setApp(app);
 
         const handleResize = () => {
-            resizeCanvas(app, 1600, 900);
+            const ratio = Math.min(window.innerWidth / defaultWidth, window.innerHeight / defaultHeight);
+
+            const newWidth = defaultWidth * ratio;
+            const newHeight = defaultHeight * ratio
+
+            app.renderer.resize(newWidth, newHeight);
+
+            setCanvasSize({width: newWidth, height: newHeight})
         };
 
         window.addEventListener('resize', handleResize);
@@ -37,7 +47,10 @@ export function CanvasManager({children}: CanvasManagerProps) {
     }, []);
 
     return (
-        <AppContext.Provider value={appRef.current}>
+        <AppContext.Provider value={{
+            app: app,
+            canvasSize: canvasSize
+        }}>
             <div style={{
                 display: 'flex',
                 justifyContent: 'center',
