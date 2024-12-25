@@ -1,5 +1,5 @@
 import {BrowserRouter, Route, Routes} from "react-router-dom";
-import {BattleshipGame} from "./page/BattleshipGame.tsx";
+import {BattleshipGame} from "./pages/BattleshipGame.tsx";
 
 function App() {
 

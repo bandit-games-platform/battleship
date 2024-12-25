@@ -1,6 +1,7 @@
 import {useContext, useEffect} from "react";
 import {AppContext} from "../context/AppContext.ts";
 import * as PIXI from "pixi.js";
+import {ExplosionSprite} from "../components/effects/ExplosionSprite.tsx";
 
 interface LobbyQueueProps {
     setScene: (scene: string) => void
@@ -33,5 +34,7 @@ export function LobbyQueue({setScene}: LobbyQueueProps) {
         }
     }, [app, canvasSize, setScene]);
 
-    return null;
+    return (
+        <ExplosionSprite x={canvasSize.width/2} y={canvasSize.height/2-100} />
+    );
 }
