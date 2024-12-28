@@ -22,7 +22,7 @@ export function BattleshipGame() {
         
         // Check for optional lobbyId (set by platform to indicate lobby to join from invites)
         if (searchParams.has("lobbyId")) {
-            setPlayerId(searchParams.get("lobbyId")!);
+            setLobbyId(searchParams.get("lobbyId")!);
 
             searchParams.delete("lobbyId");
             setSearchParams(searchParams);
