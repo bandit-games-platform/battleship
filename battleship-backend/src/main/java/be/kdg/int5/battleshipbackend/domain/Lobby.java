@@ -13,6 +13,10 @@ public class Lobby {
         this.players = players;
     }
 
+    public PlayerId opponent(PlayerId player) {
+        return players.stream().filter(pid -> !pid.uuid().equals(player.uuid())).findAny().orElseThrow();
+    }
+
     public LobbyId getId() {
         return id;
     }
