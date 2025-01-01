@@ -1,7 +1,6 @@
 package be.kdg.int5.battleshipbackend.controller.dto;
 
 import be.kdg.int5.battleshipbackend.domain.Lobby;
-import be.kdg.int5.battleshipbackend.domain.PlayerId;
 
 import java.util.List;
 import java.util.UUID;
@@ -33,7 +32,10 @@ public class LoadLobbyDto {
         return new LoadLobbyDto(
                 domain.getId().uuid(),
                 domain.getOwnerId().uuid(),
-                domain.getPlayers().stream().map(PlayerId::uuid).toList()
+                domain.getPlayers()
+                        .stream()
+                        .map(player -> player.getId().uuid())
+                        .toList()
         );
     }
 

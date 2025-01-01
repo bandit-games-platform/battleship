@@ -5,12 +5,20 @@ import java.util.List;
 public class Lobby {
     private final LobbyId id;
     private PlayerId ownerId;
-    private List<PlayerId> players;
+    private List<Player> players;
 
     public Lobby(LobbyId id, PlayerId ownerId, List<PlayerId> players) {
         this.id = id;
         this.ownerId = ownerId;
-        this.players = players;
+        this.players = players.stream().map(Player::new).toList();
+    }
+
+    public Player opponent(Player player) {
+        return players
+                .stream()
+                .filter(p -> !player.getId().equals(p.getId()))
+                .findAny()
+                .orElseThrow();
     }
 
     public LobbyId getId() {
@@ -21,7 +29,7 @@ public class Lobby {
         return ownerId;
     }
 
-    public List<PlayerId> getPlayers() {
+    public List<Player> getPlayers() {
         return players;
     }
 
@@ -29,11 +37,11 @@ public class Lobby {
         this.ownerId = ownerId;
     }
 
-    public void setPlayers(List<PlayerId> players) {
+    public void setPlayers(List<Player> players) {
         this.players = players;
     }
 
     public void addPlayer(PlayerId player) {
-        this.players.add(player);
+        this.players.add(new Player(player));
     }
 }
