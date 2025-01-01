@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Set;
 
 public class Board {
+    public static final int BOARD_ROWS = 10;
+    public static final int BOARD_COLS = 10;
+
     private final List<Ship> aliveShips;
     private final List<Ship> sunkShips;
     private final Set<Coordinate> shots;

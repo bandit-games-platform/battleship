@@ -11,8 +11,6 @@ import java.util.Arrays;
 
 @Configuration
 public class GameConfig {
-    public static final int BOARD_ROWS = 10;
-    public static final int BOARD_COLS = 10;
 
     @Value("${bandit_sdk.base_url.game_registry}")
     private String gameRegistryUrl;

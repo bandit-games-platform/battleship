@@ -2,13 +2,10 @@ package be.kdg.int5.battleshipbackend.domain;
 
 import java.util.Objects;
 
-import static be.kdg.int5.battleshipbackend.config.GameConfig.BOARD_COLS;
-import static be.kdg.int5.battleshipbackend.config.GameConfig.BOARD_ROWS;
-
 public record Coordinate(int row, int col) {
     public Coordinate {
-        if (row < 0 || row >= BOARD_ROWS) throw new IllegalArgumentException("coordinate row not on board");
-        if (col < 0 || col >= BOARD_COLS) throw new IllegalArgumentException("coordinate col not on board");
+        if (row < 0 || row >= Board.BOARD_ROWS) throw new IllegalArgumentException("coordinate row not on board");
+        if (col < 0 || col >= Board.BOARD_COLS) throw new IllegalArgumentException("coordinate col not on board");
     }
 
     @Override
