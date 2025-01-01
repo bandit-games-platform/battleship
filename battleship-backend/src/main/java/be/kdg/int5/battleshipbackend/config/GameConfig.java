@@ -11,7 +11,6 @@ import java.util.Arrays;
 
 @Configuration
 public class GameConfig {
-
     @Value("${bandit_sdk.base_url.game_registry}")
     private String gameRegistryUrl;
     @Value("${bandit_sdk.base_url.gameplay}")
