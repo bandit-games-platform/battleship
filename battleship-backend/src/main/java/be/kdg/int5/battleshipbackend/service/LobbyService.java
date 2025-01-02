@@ -88,7 +88,6 @@ public class LobbyService {
         if (loadedLobby.getPlayers().size() > 1) {
             if (player.isReady() && loadedLobby.opponent(player).isReady()) {
                 logger.info("Everyone in the lobby is ready, time to start the battle(ship)!");
-                loadedLobby.setGameStage(GameStage.ARRANGING);
                 sdk.patchLobby(
                         new LobbyContext(lobbyId.uuid()),
                         loadedLobby.getOwnerId().uuid(),

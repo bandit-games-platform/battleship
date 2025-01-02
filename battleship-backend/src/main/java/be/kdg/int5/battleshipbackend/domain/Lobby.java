@@ -5,13 +5,11 @@ import java.util.stream.Collectors;
 
 public class Lobby {
     private final LobbyId id;
-    private GameStage gameStage;
     private PlayerId ownerId;
     private List<Player> players;
 
     public Lobby(LobbyId id, PlayerId ownerId, List<PlayerId> players) {
         this.id = id;
-        this.gameStage = GameStage.QUEUEING;
         this.ownerId = ownerId;
         this.players = players.stream().map(Player::new).collect(Collectors.toList());
     }
@@ -34,14 +32,6 @@ public class Lobby {
 
     public List<Player> getPlayers() {
         return players;
-    }
-
-    public GameStage getGameStage() {
-        return gameStage;
-    }
-
-    public void setGameStage(GameStage gameStage) {
-        this.gameStage = gameStage;
     }
 
     public void setOwnerId(PlayerId ownerId) {
@@ -77,5 +67,21 @@ public class Lobby {
             }
         }
         return false;
+    }
+
+    public GameStage getGameStage() {
+        for (Player player : players) {
+            if (!player.isReady()) return GameStage.QUEUEING;
+        }
+
+        for (Player player : players) {
+            if (player.getBoard() == null) return GameStage.ARRANGING;
+        }
+
+        for (Player player : players) {
+            if (player.hasLostBattle()) return GameStage.FINISHED;
+        }
+
+        return GameStage.BATTLE;
     }
 }
