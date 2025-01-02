@@ -52,6 +52,15 @@ public class LobbyService {
             return startNewLobby(playerId);
         }
 
+        if (existingLobby.getPlayer(playerId) != null) {
+            logger.info("Player {} is already in the lobby, can't join again.", playerId.uuid());
+            return null;
+        }
+        if (existingLobby.getPlayers().size() >= 2) {
+            logger.info("Lobby has {} players, it is too full, denying join request!", existingLobby.getPlayers().size());
+            return null;
+        }
+
         existingLobby.addPlayer(playerId);
 
         sdk.patchLobby(
@@ -60,12 +69,31 @@ public class LobbyService {
                 existingLobby.getPlayers().size(),
                 existingLobby.getPlayers().size() >= 2
         );
+        repository.updatedLobby(existingLobby);
 
         logger.info("Player {} has joined lobby {}, there are now {} players in the lobby.",
                 playerId.uuid(), lobbyId.uuid(), existingLobby.getPlayers().size()
         );
 
         return existingLobby;
+    }
+
+    public Lobby playerReadyToggle(PlayerId playerId, LobbyId lobbyId) {
+        Lobby loadedLobby = repository.getLobby(lobbyId);
+        if (loadedLobby == null) return null;
+
+        Player player = loadedLobby.getPlayer(playerId);
+        player.setReady(!player.isReady());
+        loadedLobby.replacePlayer(player);
+
+        logger.info("Player {} is {}.", player.getId().uuid(), player.isReady()? "now ready to play" : "not ready to play");
+
+        repository.updatedLobby(loadedLobby);
+        return loadedLobby;
+    }
+
+    public Lobby getLobbyInformation(LobbyId lobbyId) {
+        return repository.getLobby(lobbyId);
     }
 
     public boolean leaveLobby(PlayerId playerId, LobbyId lobbyId) {
@@ -75,9 +103,13 @@ public class LobbyService {
         boolean removedPlayer = loadedLobby.removePlayer(playerId);
         if (!removedPlayer) return false;
 
+        logger.info("Player {} has now left the lobby {}.", playerId.uuid(), lobbyId.uuid());
+
         if (loadedLobby.getOwnerId().equals(playerId)) {
             List<Player> lobbyPlayers = loadedLobby.getPlayers();
             if (!lobbyPlayers.isEmpty()) loadedLobby.setOwnerId(lobbyPlayers.getFirst().getId());
+
+            logger.info("Player who left was lobby owner, new owner {}", loadedLobby.getOwnerId().uuid());
         }
 
         if (loadedLobby.getPlayers().isEmpty()) removeLobby(lobbyId);
@@ -94,7 +126,8 @@ public class LobbyService {
         return true;
     }
 
-    public void removeLobby(LobbyId lobbyId) {
+    private void removeLobby(LobbyId lobbyId) {
+        logger.info("No players left in lobby {}, closing it down.", lobbyId.uuid());
         sdk.closeLobby(new LobbyContext(lobbyId.uuid()));
         repository.removeLobby(lobbyId);
     }

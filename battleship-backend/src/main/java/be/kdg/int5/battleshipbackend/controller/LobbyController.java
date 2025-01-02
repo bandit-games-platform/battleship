@@ -1,7 +1,7 @@
 package be.kdg.int5.battleshipbackend.controller;
 
 import be.kdg.int5.battleshipbackend.controller.dto.CreateLobbyDto;
-import be.kdg.int5.battleshipbackend.controller.dto.JoinLobbyDto;
+import be.kdg.int5.battleshipbackend.controller.dto.LobbyPlayerDto;
 import be.kdg.int5.battleshipbackend.controller.dto.LoadLobbyDto;
 import be.kdg.int5.battleshipbackend.domain.Lobby;
 import be.kdg.int5.battleshipbackend.domain.LobbyId;
@@ -23,6 +23,25 @@ public class LobbyController {
         this.lobbyService = lobbyService;
     }
 
+    @GetMapping("/{lobbyId}")
+    public ResponseEntity<LoadLobbyDto> getLobbyInformation(
+            @RequestParam(required = false) String playerId,
+            @PathVariable String lobbyId
+    ) {
+        UUID lobbyUUID = UUID.fromString(lobbyId);
+        Lobby lobby = lobbyService.getLobbyInformation(new LobbyId(lobbyUUID));
+        if (lobby == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        LoadLobbyDto loadLobbyDto = LoadLobbyDto.from(lobby);
+
+        if (playerId != null) {
+            UUID playerUUID = UUID.fromString(playerId);
+            if (lobby.getPlayer(new PlayerId(playerUUID)) == null) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            loadLobbyDto.setPlayerHasReadied(lobby.getPlayer(new PlayerId(playerUUID)).isReady());
+        }
+
+        return ResponseEntity.ok(loadLobbyDto);
+    }
+
     @PostMapping
     public ResponseEntity<LoadLobbyDto> startNewLobby(@RequestBody @Valid CreateLobbyDto createLobbyDto) {
         Lobby newLobby = lobbyService.startNewLobby(new PlayerId(createLobbyDto.getOwnerId()));
@@ -33,15 +52,30 @@ public class LobbyController {
     }
 
     @PostMapping("/{lobbyId}/join")
-    public ResponseEntity<LoadLobbyDto> joinExistingLobby(@RequestBody @Valid JoinLobbyDto dto, @PathVariable String lobbyId) {
+    public ResponseEntity<LoadLobbyDto> joinExistingLobby(@RequestBody @Valid LobbyPlayerDto dto, @PathVariable String lobbyId) {
         UUID lobbyUUID = UUID.fromString(lobbyId);
         Lobby updatedLobby = lobbyService.joinExistingLobby(new PlayerId(dto.getPlayerId()), new LobbyId(lobbyUUID));
+
+        if (updatedLobby == null) return new ResponseEntity<>(HttpStatus.CONFLICT);
 
         return ResponseEntity.ok(LoadLobbyDto.from(updatedLobby));
     }
 
+    @PostMapping("/{lobbyId}/ready")
+    public ResponseEntity<LoadLobbyDto> toggleReadyState(@RequestBody @Valid LobbyPlayerDto dto, @PathVariable String lobbyId) {
+        UUID lobbyUUID = UUID.fromString(lobbyId);
+        PlayerId playerId = new PlayerId(dto.getPlayerId());
+        Lobby lobby = lobbyService.playerReadyToggle(playerId, new LobbyId(lobbyUUID));
+        if (lobby == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+        LoadLobbyDto loadLobbyDto = LoadLobbyDto.from(lobby);
+        loadLobbyDto.setPlayerHasReadied(lobby.getPlayer(new PlayerId(dto.getPlayerId())).isReady());
+
+        return ResponseEntity.ok(loadLobbyDto);
+    }
+
     @DeleteMapping("/{lobbyId}/leave")
-    public ResponseEntity<Void> leaveLobby(@RequestBody @Valid JoinLobbyDto dto, @PathVariable String lobbyId) {
+    public ResponseEntity<Void> leaveLobby(@RequestBody @Valid LobbyPlayerDto dto, @PathVariable String lobbyId) {
         UUID lobbyUUID = UUID.fromString(lobbyId);
         boolean leftLobby = lobbyService.leaveLobby(new PlayerId(dto.getPlayerId()), new LobbyId(lobbyUUID));
 

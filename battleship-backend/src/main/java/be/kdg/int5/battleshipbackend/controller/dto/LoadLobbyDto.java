@@ -58,4 +58,8 @@ public class LoadLobbyDto {
     public boolean isPlayerHasReadied() {
         return playerHasReadied;
     }
+
+    public void setPlayerHasReadied(boolean playerHasReadied) {
+        this.playerHasReadied = playerHasReadied;
+    }
 }
