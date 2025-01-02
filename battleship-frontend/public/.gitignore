@@ -1,0 +1,6 @@
+
+# Paint.NET files
+*.pdn
+
+# Work In Progress folders
+**/wip
