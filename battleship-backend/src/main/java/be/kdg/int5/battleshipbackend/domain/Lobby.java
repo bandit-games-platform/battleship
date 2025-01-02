@@ -44,4 +44,14 @@ public class Lobby {
     public void addPlayer(PlayerId player) {
         this.players.add(new Player(player));
     }
+
+    public boolean removePlayer(PlayerId player) {
+        for (Player lobbyPlayer: this.players) {
+            if (lobbyPlayer.getId().equals(player)) {
+                players.remove(lobbyPlayer);
+                return true;
+            }
+        }
+        return false;
+    }
 }
