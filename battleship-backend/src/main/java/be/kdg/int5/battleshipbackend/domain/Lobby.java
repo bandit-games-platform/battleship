@@ -5,11 +5,13 @@ import java.util.stream.Collectors;
 
 public class Lobby {
     private final LobbyId id;
+    private boolean inGame;
     private PlayerId ownerId;
     private List<Player> players;
 
     public Lobby(LobbyId id, PlayerId ownerId, List<PlayerId> players) {
         this.id = id;
+        this.inGame = false;
         this.ownerId = ownerId;
         this.players = players.stream().map(Player::new).collect(Collectors.toList());
     }
@@ -32,6 +34,14 @@ public class Lobby {
 
     public List<Player> getPlayers() {
         return players;
+    }
+
+    public boolean isInGame() {
+        return inGame;
+    }
+
+    public void setInGame(boolean inGame) {
+        this.inGame = inGame;
     }
 
     public void setOwnerId(PlayerId ownerId) {

@@ -5,6 +5,7 @@ import be.kdg.int5.battleshipbackend.controller.dto.LobbyPlayerDto;
 import be.kdg.int5.battleshipbackend.controller.dto.LoadLobbyDto;
 import be.kdg.int5.battleshipbackend.domain.Lobby;
 import be.kdg.int5.battleshipbackend.domain.LobbyId;
+import be.kdg.int5.battleshipbackend.domain.Player;
 import be.kdg.int5.battleshipbackend.domain.PlayerId;
 import be.kdg.int5.battleshipbackend.service.LobbyService;
 import jakarta.validation.Valid;
@@ -25,7 +26,7 @@ public class LobbyController {
 
     @GetMapping("/{lobbyId}")
     public ResponseEntity<LoadLobbyDto> getLobbyInformation(
-            @RequestParam(required = false) String playerId,
+            @RequestParam String playerId,
             @PathVariable String lobbyId
     ) {
         UUID lobbyUUID = UUID.fromString(lobbyId);
@@ -35,8 +36,13 @@ public class LobbyController {
 
         if (playerId != null) {
             UUID playerUUID = UUID.fromString(playerId);
-            if (lobby.getPlayer(new PlayerId(playerUUID)) == null) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            Player player = lobby.getPlayer(new PlayerId(playerUUID));
+            if (player == null) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             loadLobbyDto.setPlayerHasReadied(lobby.getPlayer(new PlayerId(playerUUID)).isReady());
+
+            if (lobby.isInGame()) {
+                loadLobbyDto.setStage("playing");
+            }
         }
 
         return ResponseEntity.ok(loadLobbyDto);
@@ -69,7 +75,12 @@ public class LobbyController {
         if (lobby == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
         LoadLobbyDto loadLobbyDto = LoadLobbyDto.from(lobby);
-        loadLobbyDto.setPlayerHasReadied(lobby.getPlayer(new PlayerId(dto.getPlayerId())).isReady());
+        Player player = lobby.getPlayer(new PlayerId(dto.getPlayerId()));
+        loadLobbyDto.setPlayerHasReadied(player.isReady());
+
+        if (lobby.isInGame()) {
+            loadLobbyDto.setStage("playing");
+        }
 
         return ResponseEntity.ok(loadLobbyDto);
     }

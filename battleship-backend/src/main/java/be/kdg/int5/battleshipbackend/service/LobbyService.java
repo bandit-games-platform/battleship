@@ -88,6 +88,21 @@ public class LobbyService {
 
         logger.info("Player {} is {}.", player.getId().uuid(), player.isReady()? "now ready to play" : "not ready to play");
 
+        if (loadedLobby.getPlayers().size() > 1) {
+            if (player.isReady() && loadedLobby.opponent(player).isReady()) {
+                logger.info("Everyone in the lobby is ready, time to start the battle(ship)!");
+                loadedLobby.setInGame(true);
+                sdk.patchLobby(
+                        new LobbyContext(lobbyId.uuid()),
+                        loadedLobby.getOwnerId().uuid(),
+                        loadedLobby.getPlayers().size(),
+                        true
+                );
+            } else {
+                loadedLobby.setInGame(false);
+            }
+        }
+
         repository.updatedLobby(loadedLobby);
         return loadedLobby;
     }

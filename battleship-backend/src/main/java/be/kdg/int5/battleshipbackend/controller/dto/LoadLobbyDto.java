@@ -55,6 +55,10 @@ public class LoadLobbyDto {
         return stage;
     }
 
+    public void setStage(String stage) {
+        this.stage = stage;
+    }
+
     public boolean isPlayerHasReadied() {
         return playerHasReadied;
     }
