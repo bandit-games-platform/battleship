@@ -3,7 +3,8 @@ package be.kdg.int5.battleshipbackend.domain;
 public enum GameStage {
     QUEUEING("queueing"),
     ARRANGING("arranging"),
-    PLAYING("playing");
+    BATTLE("battle"),
+    FINISHED("finished");
 
     private final String value;
     GameStage(String value) {
