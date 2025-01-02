@@ -36,21 +36,21 @@ export function LobbyQueue({setScene, lobbyId, playerId}: LobbyQueueProps) {
         }
     }, [lobby, setScene])
 
-    const toggleReadiness = () => {
-        console.log("Toggling ready state for player")
-        if (lobbyId && playerId) {
-            readyToggle({lobbyId, playerId});
+    useEffect(() => {
+        const toggleReadiness = () => {
+            console.log("Toggling ready state for player")
+            if (lobbyId && playerId) {
+                readyToggle({lobbyId, playerId});
 
-            while (readyPending) {
-                setTimeout(() => {console.log("Waiting for ready confirmation")}, 10);
-            }
-            if (!readyError) {
-                setCurrentLobby(updatedLobby);
+                while (readyPending) {
+                    setTimeout(() => {console.log("Waiting for ready confirmation")}, 10);
+                }
+                if (!readyError) {
+                    setCurrentLobby(updatedLobby);
+                }
             }
         }
-    }
 
-    useEffect(() => {
         if (app && app.stage) {
             const background = new PIXI.Graphics();
             background.beginFill(0x1099bb);
@@ -117,22 +117,58 @@ export function LobbyQueue({setScene, lobbyId, playerId}: LobbyQueueProps) {
 
             app.stage.addChild(button);
 
-            const lobbyInfoText = new PIXI.Text('Lobby id ' + lobbyId + ' player ' + playerId);
-            lobbyInfoText.anchor.set(0.5);
-            lobbyInfoText.x = app.view.width / 2;
-            lobbyInfoText.y = app.view.height / 3;
-            app.stage.addChild(lobbyInfoText);
+            const playerCards: PIXI.Graphics[] = [];
+            const numberPlayers = currentLobby.players.length;
+            for (let i = 0; i < numberPlayers; i++) {
+                const player = currentLobby.players[i];
+                const card = new PIXI.Graphics();
+                card.beginFill(0x1434A4);
+                card.drawRoundedRect(0, 0, 150, 200, 20);
+                card.endFill();
+
+                if (numberPlayers === 1) {
+                    card.x = (app.view.width / 2) - 75
+                } else {
+                    card.x = ((app.view.width / 7) * (3 + i)) - 75
+                }
+                card.y = app.view.height / 2 - 100;
+
+                const readyText = new PIXI.Text(player.ready ? 'Ready' : 'Not Ready', { fontSize: 24, fill: '#ffffff' });
+                readyText.anchor.set(0.5);
+                readyText.x = card.width / 2;
+                readyText.y = 25;
+                card.addChild(readyText);
+
+                let playerNumberText = "Player " + (i + 1);
+                if (player.playerId === playerId) playerNumberText += " (you)"
+
+                const playerText = new PIXI.Text(playerNumberText, { fontSize: 20, fill: '#ffffff' });
+                playerText.anchor.set(0.5);
+                playerText.x = card.width / 2;
+                playerText.y = card.height - 25;
+                card.addChild(playerText);
+
+                playerCards.push(card);
+            }
+            for (const card of playerCards) {
+                app.stage.addChild(card);
+            }
 
             // Clean up on unmount
             return () => {
                 app.stage.removeChild(background);
-                app.stage.removeChild(lobbyInfoText);
                 app.stage.removeChild(button);
+
+                for (const card of playerCards) {
+                    app.stage.removeChild(card);
+                    card.destroy(true);
+                }
+
                 background.destroy(true);
                 button.destroy(true);
             };
         }
-    }, [app, canvasSize, currentLobby, lobbyError, lobbyId, lobbyLoading, playerId, setScene]);
+    }, [app, canvasSize, currentLobby, lobbyError, lobbyId, lobbyLoading, playerId, readyError, readyPending, readyToggle, setScene, updatedLobby]);
 
     return (
         <div></div>
