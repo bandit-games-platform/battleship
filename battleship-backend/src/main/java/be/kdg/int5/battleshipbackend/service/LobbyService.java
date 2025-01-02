@@ -1,10 +1,7 @@
 package be.kdg.int5.battleshipbackend.service;
 
 import be.kdg.int5.GameSDK;
-import be.kdg.int5.battleshipbackend.domain.Lobby;
-import be.kdg.int5.battleshipbackend.domain.LobbyId;
-import be.kdg.int5.battleshipbackend.domain.Player;
-import be.kdg.int5.battleshipbackend.domain.PlayerId;
+import be.kdg.int5.battleshipbackend.domain.*;
 import be.kdg.int5.battleshipbackend.repository.LobbyRepository;
 import be.kdg.int5.domain.GameContext;
 import be.kdg.int5.domain.LobbyContext;
@@ -91,15 +88,13 @@ public class LobbyService {
         if (loadedLobby.getPlayers().size() > 1) {
             if (player.isReady() && loadedLobby.opponent(player).isReady()) {
                 logger.info("Everyone in the lobby is ready, time to start the battle(ship)!");
-                loadedLobby.setInGame(true);
+                loadedLobby.setGameStage(GameStage.ARRANGING);
                 sdk.patchLobby(
                         new LobbyContext(lobbyId.uuid()),
                         loadedLobby.getOwnerId().uuid(),
                         loadedLobby.getPlayers().size(),
                         true
                 );
-            } else {
-                loadedLobby.setInGame(false);
             }
         }
 

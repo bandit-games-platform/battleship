@@ -26,25 +26,13 @@ public class LobbyController {
 
     @GetMapping("/{lobbyId}")
     public ResponseEntity<LoadLobbyDto> getLobbyInformation(
-            @RequestParam String playerId,
             @PathVariable String lobbyId
     ) {
         UUID lobbyUUID = UUID.fromString(lobbyId);
         Lobby lobby = lobbyService.getLobbyInformation(new LobbyId(lobbyUUID));
         if (lobby == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
         LoadLobbyDto loadLobbyDto = LoadLobbyDto.from(lobby);
-
-        if (playerId != null) {
-            UUID playerUUID = UUID.fromString(playerId);
-            Player player = lobby.getPlayer(new PlayerId(playerUUID));
-            if (player == null) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-            loadLobbyDto.setPlayerHasReadied(lobby.getPlayer(new PlayerId(playerUUID)).isReady());
-
-            if (lobby.isInGame()) {
-                loadLobbyDto.setStage("playing");
-            }
-        }
-
         return ResponseEntity.ok(loadLobbyDto);
     }
 
@@ -75,12 +63,6 @@ public class LobbyController {
         if (lobby == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
         LoadLobbyDto loadLobbyDto = LoadLobbyDto.from(lobby);
-        Player player = lobby.getPlayer(new PlayerId(dto.getPlayerId()));
-        loadLobbyDto.setPlayerHasReadied(player.isReady());
-
-        if (lobby.isInGame()) {
-            loadLobbyDto.setStage("playing");
-        }
 
         return ResponseEntity.ok(loadLobbyDto);
     }
