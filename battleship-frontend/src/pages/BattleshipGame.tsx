@@ -4,6 +4,7 @@ import {MainMenu} from "../scenes/MainMenu.tsx";
 import {LobbyQueue} from "../scenes/LobbyQueue.tsx";
 import {IdentityContext} from "../context/IdentityContext.ts";
 import {useSearchParams} from "react-router-dom";
+import {ThemeProvider} from "../context/ThemeProvider.tsx";
 
 export function BattleshipGame() {
     const [scene, setScene] = useState<string>("main_menu");
@@ -46,13 +47,15 @@ export function BattleshipGame() {
             playerId: playerId,
             lobbyId: lobbyId
         }}>
-            <CanvasManager>
-                <>
-                    Scene: {scene}
-                    {scene === "main_menu" && <MainMenu setScene={setScene} setLobbyId={setLobbyId} />}
-                    {scene === "lobby_queue" && <LobbyQueue setScene={setScene} />}
-                </>
-            </CanvasManager>
+            <ThemeProvider>
+                <CanvasManager>
+                    <>
+                        Scene: {scene}
+                        {scene === "main_menu" && <MainMenu setScene={setScene} setLobbyId={setLobbyId} />}
+                        {scene === "lobby_queue" && <LobbyQueue setScene={setScene} />}
+                    </>
+                </CanvasManager>
+            </ThemeProvider>
         </IdentityContext.Provider>
     )
 }
