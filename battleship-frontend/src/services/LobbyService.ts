@@ -21,3 +21,10 @@ export async function getLobbyState(lobbyId: string | undefined) {
     const {data: lobby} = await axios.get<Lobby>("/lobby/" + lobbyId);
     return lobby;
 }
+
+export async function readyToggle(playerId: string, lobbyId: string) {
+    const {data: lobby} = await axios.post<Lobby>("/lobby/" + lobbyId + "/ready", {
+        playerId: playerId
+    })
+    return lobby
+}
