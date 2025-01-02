@@ -74,14 +74,18 @@ public class Lobby {
             if (!player.isReady()) return GameStage.QUEUEING;
         }
 
-        for (Player player : players) {
-            if (player.getBoard() == null) return GameStage.ARRANGING;
-        }
+        if (players.size() > 1) {
+            for (Player player : players) {
+                if (player.getBoard() == null) return GameStage.ARRANGING;
+            }
 
-        for (Player player : players) {
-            if (player.hasLostBattle()) return GameStage.FINISHED;
-        }
+            for (Player player : players) {
+                if (player.hasLostBattle()) return GameStage.FINISHED;
+            }
 
-        return GameStage.BATTLE;
+            return GameStage.BATTLE;
+        } else {
+            return GameStage.QUEUEING;
+        }
     }
 }
