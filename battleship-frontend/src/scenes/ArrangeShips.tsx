@@ -3,11 +3,53 @@ import {useContext, useEffect, useState} from "react";
 import {AppContext} from "../context/AppContext.ts";
 import {getShipLength, ShipType} from "../model/ShipType.ts";
 import {DraggableShip} from "../components/DraggableShip.tsx";
+import * as PIXI from "pixi.js";
 
 const boardMargin = 10;
 
-export function ArrangeShips() {
+interface ArrangeShipsRendererProps {
+    boardSize: number,
+    handleAcceptFormation: () => void
+}
+
+const checkAllShipsPlaced = (placements: { [key in ShipType]: {col: number, row: number} | null}): boolean => {
+    return Object.values(ShipType).every(st => placements[st] !== null);
+}
+
+function ArrangeShipsRenderer({boardSize, handleAcceptFormation}: ArrangeShipsRendererProps) {
     const {app, canvasSize} = useContext(AppContext);
+
+    useEffect(() => {
+        if (app && app.stage) {
+            const background = new PIXI.Graphics();
+            background.beginFill(0xe5decf);
+            background.drawRect(0, 0, canvasSize.width, canvasSize.height);
+            background.endFill();
+            app.stage.addChild(background);
+
+            const button = new PIXI.Graphics();
+            button.beginFill(0x000000);
+            button.drawRect(0, 0, canvasSize.width - (boardSize + boardMargin * 5), 100);
+            button.endFill();
+            button.x = boardMargin * 2;
+            button.y = canvasSize.height - 100 - boardMargin;
+            button.eventMode = 'static';
+            button.on('pointerdown', handleAcceptFormation);
+            const buttonText = new PIXI.Text('Accept Formation', { fontSize: 32, fill: '#ffffff' });
+            buttonText.anchor.set(0.5);
+            buttonText.x = button.width / 2;
+            buttonText.y = button.height / 2;
+            button.addChild(buttonText);
+
+            app.stage.addChild(button);
+        }
+    }, [app, boardSize, canvasSize, handleAcceptFormation]);
+
+    return null;
+}
+
+export function ArrangeShips() {
+    const {canvasSize} = useContext(AppContext);
 
     const [shipPlacements, setShipPlacements] = useState<{ [key in ShipType]: {col: number, row: number} | null}>({
         CARRIER: null,
@@ -66,10 +108,15 @@ export function ArrangeShips() {
         };
     }
 
-    // TODO: add background and a button to submit the ship formation
+    const handleAcceptFormation = () => {
+        if (!checkAllShipsPlaced(shipPlacements)) return;
+        console.log(shipPlacements)
+
+    }
 
     return (
         <>
+            <ArrangeShipsRenderer boardSize={boardSize} handleAcceptFormation={handleAcceptFormation}/>
             <Board pos={{x: boardX, y: boardMargin}} size={boardSize} />
 
             {Object.values(ShipType).map((shipType, index) => (
