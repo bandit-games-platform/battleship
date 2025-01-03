@@ -70,22 +70,21 @@ public class Lobby {
     }
 
     public GameStage getGameStage() {
+        if (players.size() < 2) {
+            return GameStage.QUEUEING;
+        }
         for (Player player : players) {
             if (!player.isReady()) return GameStage.QUEUEING;
         }
 
-        if (players.size() > 1) {
-            for (Player player : players) {
-                if (player.getBoard() == null) return GameStage.ARRANGING;
-            }
-
-            for (Player player : players) {
-                if (player.hasLostBattle()) return GameStage.FINISHED;
-            }
-
-            return GameStage.BATTLE;
-        } else {
-            return GameStage.QUEUEING;
+        for (Player player : players) {
+            if (player.getBoard() == null) return GameStage.ARRANGING;
         }
+
+        for (Player player : players) {
+            if (player.hasLostBattle()) return GameStage.FINISHED;
+        }
+
+        return GameStage.BATTLE;
     }
 }
