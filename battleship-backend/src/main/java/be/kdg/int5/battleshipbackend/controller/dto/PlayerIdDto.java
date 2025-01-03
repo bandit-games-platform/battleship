@@ -4,14 +4,14 @@ import jakarta.validation.constraints.NotNull;
 
 import java.util.UUID;
 
-public class LobbyPlayerDto {
+public class PlayerIdDto {
     @NotNull
     private UUID playerId;
 
-    public LobbyPlayerDto() {
+    public PlayerIdDto() {
     }
 
-    public LobbyPlayerDto(UUID playerId) {
+    public PlayerIdDto(UUID playerId) {
         this.playerId = playerId;
     }
 

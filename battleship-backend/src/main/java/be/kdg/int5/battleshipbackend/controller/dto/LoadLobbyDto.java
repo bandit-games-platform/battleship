@@ -8,21 +8,21 @@ import java.util.UUID;
 public class LoadLobbyDto {
     private UUID lobbyId;
     private UUID ownerId;
-    private List<Player> players;
+    private List<LoadPlayerRecord> loadPlayerRecords;
 
     private String stage;
 
     public LoadLobbyDto() {
     }
 
-    public LoadLobbyDto(UUID lobbyId, UUID ownerId, List<Player> players) {
-        this(lobbyId, ownerId, players, "queueing");
+    public LoadLobbyDto(UUID lobbyId, UUID ownerId, List<LoadPlayerRecord> loadPlayerRecords) {
+        this(lobbyId, ownerId, loadPlayerRecords, "queueing");
     }
 
-    public LoadLobbyDto(UUID lobbyId, UUID ownerId, List<Player> players, String stage) {
+    public LoadLobbyDto(UUID lobbyId, UUID ownerId, List<LoadPlayerRecord> loadPlayerRecords, String stage) {
         this.lobbyId = lobbyId;
         this.ownerId = ownerId;
-        this.players = players;
+        this.loadPlayerRecords = loadPlayerRecords;
         this.stage = stage;
     }
 
@@ -32,7 +32,7 @@ public class LoadLobbyDto {
                 domain.getOwnerId().uuid(),
                 domain.getPlayers()
                         .stream()
-                        .map(player -> new Player(player.getId().uuid(), player.isReady()))
+                        .map(player -> new LoadPlayerRecord(player.getId().uuid(), player.isReady()))
                         .toList(),
                 domain.getGameStage().getValue()
         );
@@ -46,8 +46,8 @@ public class LoadLobbyDto {
         return ownerId;
     }
 
-    public List<Player> getPlayers() {
-        return players;
+    public List<LoadPlayerRecord> getPlayers() {
+        return loadPlayerRecords;
     }
 
     public String getStage() {
@@ -58,5 +58,5 @@ public class LoadLobbyDto {
         this.stage = stage;
     }
 
-    public record Player(UUID playerId, boolean ready) {}
+    public record LoadPlayerRecord(UUID playerId, boolean ready) {}
 }

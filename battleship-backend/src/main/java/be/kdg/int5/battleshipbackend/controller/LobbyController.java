@@ -1,11 +1,10 @@
 package be.kdg.int5.battleshipbackend.controller;
 
 import be.kdg.int5.battleshipbackend.controller.dto.CreateLobbyDto;
-import be.kdg.int5.battleshipbackend.controller.dto.LobbyPlayerDto;
+import be.kdg.int5.battleshipbackend.controller.dto.PlayerIdDto;
 import be.kdg.int5.battleshipbackend.controller.dto.LoadLobbyDto;
 import be.kdg.int5.battleshipbackend.domain.Lobby;
 import be.kdg.int5.battleshipbackend.domain.LobbyId;
-import be.kdg.int5.battleshipbackend.domain.Player;
 import be.kdg.int5.battleshipbackend.domain.PlayerId;
 import be.kdg.int5.battleshipbackend.service.LobbyService;
 import jakarta.validation.Valid;
@@ -46,7 +45,7 @@ public class LobbyController {
     }
 
     @PostMapping("/{lobbyId}/join")
-    public ResponseEntity<LoadLobbyDto> joinExistingLobby(@RequestBody @Valid LobbyPlayerDto dto, @PathVariable String lobbyId) {
+    public ResponseEntity<LoadLobbyDto> joinExistingLobby(@RequestBody @Valid PlayerIdDto dto, @PathVariable String lobbyId) {
         UUID lobbyUUID = UUID.fromString(lobbyId);
         Lobby updatedLobby = lobbyService.joinExistingLobby(new PlayerId(dto.getPlayerId()), new LobbyId(lobbyUUID));
 
@@ -56,7 +55,7 @@ public class LobbyController {
     }
 
     @PostMapping("/{lobbyId}/ready")
-    public ResponseEntity<LoadLobbyDto> toggleReadyState(@RequestBody @Valid LobbyPlayerDto dto, @PathVariable String lobbyId) {
+    public ResponseEntity<LoadLobbyDto> toggleReadyState(@RequestBody @Valid PlayerIdDto dto, @PathVariable String lobbyId) {
         UUID lobbyUUID = UUID.fromString(lobbyId);
         PlayerId playerId = new PlayerId(dto.getPlayerId());
         Lobby lobby = lobbyService.playerReadyToggle(playerId, new LobbyId(lobbyUUID));
@@ -68,7 +67,7 @@ public class LobbyController {
     }
 
     @DeleteMapping("/{lobbyId}/leave")
-    public ResponseEntity<Void> leaveLobby(@RequestBody @Valid LobbyPlayerDto dto, @PathVariable String lobbyId) {
+    public ResponseEntity<Void> leaveLobby(@RequestBody @Valid PlayerIdDto dto, @PathVariable String lobbyId) {
         UUID lobbyUUID = UUID.fromString(lobbyId);
         boolean leftLobby = lobbyService.leaveLobby(new PlayerId(dto.getPlayerId()), new LobbyId(lobbyUUID));
 
