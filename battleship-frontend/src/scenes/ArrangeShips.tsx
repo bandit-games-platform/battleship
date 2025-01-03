@@ -87,7 +87,7 @@ export function ArrangeShips() {
             prevState[shipType] = null;
             return prevState;
         });
-        setIsButtonDisabled(isSuccess || !checkAllShipsPlaced(shipPlacements));
+        setIsButtonDisabled(!checkAllShipsPlaced(shipPlacements));
         // get the position relative to the top left corner of the board
         const boardRelPos = {
             x: pos.x - boardX,
@@ -114,7 +114,7 @@ export function ArrangeShips() {
             prevState[shipType] = {col, row, isVertical};
             return prevState;
         });
-        setIsButtonDisabled(isSuccess || !checkAllShipsPlaced(shipPlacements));
+        setIsButtonDisabled(!checkAllShipsPlaced(shipPlacements));
         // Calculate the position to render the ghost image at
         return {
             x: (col + (isVertical ? 0.5 : 0)) * shipSize + boardX,
@@ -142,7 +142,7 @@ export function ArrangeShips() {
     
     return (
         <>
-            <ArrangeShipsRenderer buttonDisabled={isButtonDisabled} boardSize={boardSize} handleAcceptFormation={handleAcceptFormation}/>
+            <ArrangeShipsRenderer buttonDisabled={isButtonDisabled || isSuccess || isPending} boardSize={boardSize} handleAcceptFormation={handleAcceptFormation}/>
             <Board pos={{x: boardX, y: boardMargin}} size={boardSize} />
 
             {Object.values(ShipType).map((shipType, index) => (

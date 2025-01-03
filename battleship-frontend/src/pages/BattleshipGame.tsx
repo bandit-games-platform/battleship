@@ -8,7 +8,7 @@ import {ThemeProvider} from "../context/ThemeProvider.tsx";
 import {ArrangeShips} from "../scenes/ArrangeShips.tsx";
 
 export function BattleshipGame() {
-    const [scene, setScene] = useState<string>("arrange_ships");
+    const [scene, setScene] = useState<string>("main_menu");
     const [playerId, setPlayerId] = useState<string>("");
     const [lobbyId, setLobbyId] = useState<string | undefined>(undefined);
     const [searchParams, setSearchParams] = useSearchParams();
