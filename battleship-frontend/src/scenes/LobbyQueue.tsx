@@ -123,15 +123,15 @@ export function LobbyQueue({setScene, lobbyId, playerId}: LobbyQueueProps) {
                 const player = currentLobby.players[i];
                 const card = new PIXI.Graphics();
                 card.beginFill(0x1434A4);
-                card.drawRoundedRect(0, 0, 150, 200, 20);
+                card.drawRoundedRect(0, 0, 200, 300, 20);
                 card.endFill();
 
                 if (numberPlayers === 1) {
-                    card.x = (app.view.width / 2) - 75
+                    card.x = (app.view.width / 2) - 100
                 } else {
-                    card.x = ((app.view.width / 7) * (3 + i)) - 75
+                    card.x = ((app.view.width / 5) * (2 + i)) - 100
                 }
-                card.y = app.view.height / 2 - 100;
+                card.y = (app.view.height / 5) * 2 - 150;
 
                 const readyText = new PIXI.Text(player.ready ? 'Ready' : 'Not Ready', { fontSize: 24, fill: '#ffffff' });
                 readyText.anchor.set(0.5);
@@ -147,6 +147,14 @@ export function LobbyQueue({setScene, lobbyId, playerId}: LobbyQueueProps) {
                 playerText.x = card.width / 2;
                 playerText.y = card.height - 25;
                 card.addChild(playerText);
+
+                const playerImage = PIXI.Sprite.from('../assets/captain.png');
+                playerImage.anchor.set(0.5);
+                playerImage.width = 150;
+                playerImage.height = 150;
+                playerImage.x = card.width / 2;
+                playerImage.y = card.height / 2;
+                card.addChild(playerImage);
 
                 playerCards.push(card);
             }
