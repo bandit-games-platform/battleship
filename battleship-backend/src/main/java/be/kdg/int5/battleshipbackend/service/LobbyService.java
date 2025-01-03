@@ -78,7 +78,7 @@ public class LobbyService {
 
     public Lobby playerReadyToggle(PlayerId playerId, LobbyId lobbyId) {
         Lobby loadedLobby = repository.getLobbyById(lobbyId);
-        if (loadedLobby == null) return null;
+        if (loadedLobby == null || loadedLobby.getGameStage() != GameStage.QUEUEING) return null;
 
         Player player = loadedLobby.getPlayer(playerId);
         player.setReady(!player.isReady());
@@ -87,7 +87,7 @@ public class LobbyService {
         logger.info("Player {} is {}.", player.getId().uuid(), player.isReady()? "now ready to play" : "not ready to play");
 
         if (loadedLobby.getPlayers().size() > 1) {
-            if (player.isReady() && loadedLobby.opponent(player).isReady()) {
+            if (loadedLobby.getGameStage() == GameStage.ARRANGING) {
                 logger.info("Everyone in the lobby is ready, time to start the battle(ship)!");
                 sdk.patchLobby(
                         new LobbyContext(lobbyId.uuid()),
