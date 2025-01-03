@@ -4,19 +4,25 @@ import {AppContext} from "../context/AppContext.ts";
 import {getShipLength, ShipType} from "../model/ShipType.ts";
 import {DraggableShip} from "../components/DraggableShip.tsx";
 import * as PIXI from "pixi.js";
+import {useSubmitShipArrangement} from "../hooks/useSubmitShipArrangement.ts";
+import {IdentityContext} from "../context/IdentityContext.ts";
 
 const boardMargin = 10;
 
+type ShipPlacements = { [key in ShipType]: {col: number, row: number, isVertical: boolean} | null}
+
+
 interface ArrangeShipsRendererProps {
+    buttonDisabled: boolean,
     boardSize: number,
     handleAcceptFormation: () => void
 }
 
-const checkAllShipsPlaced = (placements: { [key in ShipType]: {col: number, row: number} | null}): boolean => {
+const checkAllShipsPlaced = (placements: ShipPlacements): boolean => {
     return Object.values(ShipType).every(st => placements[st] !== null);
 }
 
-function ArrangeShipsRenderer({boardSize, handleAcceptFormation}: ArrangeShipsRendererProps) {
+function ArrangeShipsRenderer({boardSize, handleAcceptFormation, buttonDisabled}: ArrangeShipsRendererProps) {
     const {app, canvasSize} = useContext(AppContext);
 
     useEffect(() => {
@@ -28,12 +34,13 @@ function ArrangeShipsRenderer({boardSize, handleAcceptFormation}: ArrangeShipsRe
             app.stage.addChild(background);
 
             const button = new PIXI.Graphics();
-            button.beginFill(0x000000);
+            button.beginFill(buttonDisabled ? 0x444444 : 0x000000);
             button.drawRect(0, 0, canvasSize.width - (boardSize + boardMargin * 5), 100);
             button.endFill();
             button.x = boardMargin * 2;
             button.y = canvasSize.height - 100 - boardMargin;
             button.eventMode = 'static';
+            button.cursor = 'pointer';
             button.on('pointerdown', handleAcceptFormation);
             const buttonText = new PIXI.Text('Accept Formation', { fontSize: 32, fill: '#ffffff' });
             buttonText.anchor.set(0.5);
@@ -43,21 +50,26 @@ function ArrangeShipsRenderer({boardSize, handleAcceptFormation}: ArrangeShipsRe
 
             app.stage.addChild(button);
         }
-    }, [app, boardSize, canvasSize, handleAcceptFormation]);
+    }, [app, boardSize, buttonDisabled, canvasSize, handleAcceptFormation]);
 
     return null;
 }
 
 export function ArrangeShips() {
     const {canvasSize} = useContext(AppContext);
+    const {lobbyId, playerId} = useContext(IdentityContext);
 
-    const [shipPlacements, setShipPlacements] = useState<{ [key in ShipType]: {col: number, row: number} | null}>({
+    const [shipPlacements, setShipPlacements] = useState<ShipPlacements>({
         CARRIER: null,
         BATTLESHIP: null,
         CRUISER: null,
         SUBMARINE: null,
         DESTROYER: null
     });
+
+    const [isButtonDisabled, setIsButtonDisabled] = useState<boolean>(true);
+
+    const {submitShipArrangement, isPending, isError, isSuccess} = useSubmitShipArrangement();
 
     const boardSize = canvasSize.height - 2 * boardMargin;
     const boardX = canvasSize.width - (boardSize + boardMargin);
@@ -75,6 +87,7 @@ export function ArrangeShips() {
             prevState[shipType] = null;
             return prevState;
         });
+        setIsButtonDisabled(isSuccess || !checkAllShipsPlaced(shipPlacements));
         // get the position relative to the top left corner of the board
         const boardRelPos = {
             x: pos.x - boardX,
@@ -98,9 +111,10 @@ export function ArrangeShips() {
 
         // Save ship placement for type
         setShipPlacements(prevState => {
-            prevState[shipType] = {col, row};
+            prevState[shipType] = {col, row, isVertical};
             return prevState;
         });
+        setIsButtonDisabled(isSuccess || !checkAllShipsPlaced(shipPlacements));
         // Calculate the position to render the ghost image at
         return {
             x: (col + (isVertical ? 0.5 : 0)) * shipSize + boardX,
@@ -109,14 +123,26 @@ export function ArrangeShips() {
     }
 
     const handleAcceptFormation = () => {
-        if (!checkAllShipsPlaced(shipPlacements)) return;
-        console.log(shipPlacements)
+        if (isPending || isSuccess) return;
 
+        if (lobbyId && playerId && checkAllShipsPlaced(shipPlacements) ) {
+            const arrangedShips = Object.entries(shipPlacements)
+                .map(([key, value]) => ({
+                    type: key as ShipType,
+                    placement: {col: value!.col, row: value!.row},
+                    isVertical: value!.isVertical
+                }));
+
+            submitShipArrangement({
+                identity: {lobbyId, playerId},
+                arrangedShips
+            })
+        }
     }
-
+    
     return (
         <>
-            <ArrangeShipsRenderer boardSize={boardSize} handleAcceptFormation={handleAcceptFormation}/>
+            <ArrangeShipsRenderer buttonDisabled={isButtonDisabled} boardSize={boardSize} handleAcceptFormation={handleAcceptFormation}/>
             <Board pos={{x: boardX, y: boardMargin}} size={boardSize} />
 
             {Object.values(ShipType).map((shipType, index) => (
