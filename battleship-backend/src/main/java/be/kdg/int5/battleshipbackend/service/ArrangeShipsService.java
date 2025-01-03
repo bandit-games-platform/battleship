@@ -48,6 +48,7 @@ public class ArrangeShipsService {
             logger.info("shipArrangement: Ship Arrangement saved for player {} in lobby {}", playerId, lobbyId);
             return true;
         } catch (IllegalStateException e) {
+            logger.warn("shipArrangement: Board was not accepted for player {} in lobby {}", playerId, lobbyId);
             return false;
         }
     }
