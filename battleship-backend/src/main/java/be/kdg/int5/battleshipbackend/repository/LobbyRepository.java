@@ -7,4 +7,7 @@ public interface LobbyRepository {
     Lobby save(Lobby lobby);
 
     Lobby loadById(LobbyId lobbyId);
+    Lobby getLobbyById(LobbyId lobbyId);
+    void updateLobby(Lobby lobby);
+    void removeLobbyById(LobbyId lobbyId);
 }

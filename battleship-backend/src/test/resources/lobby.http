@@ -1,0 +1,70 @@
+### POST to create a new lobby for player
+POST http://localhost:9175/api/lobby
+Accept: application/json
+Content-Type: application/json
+
+{
+    "ownerId": "cd281b11-e41e-4f12-93c8-1e9a8bf7403c"
+}
+
+> {%
+    client.global.set("lobby_id", response.body.lobbyId)
+%}
+
+### POST to join lobby with new player
+POST http://localhost:9175/api/lobby/{{lobby_id}}/join
+Accept: application/json
+Content-Type: application/json
+
+{
+    "playerId": "6ca3863d-d8db-4588-b799-704fdb267814"
+}
+
+### POST to attempt join lobby with third player (CONFLICT)
+POST http://localhost:9175/api/lobby/{{lobby_id}}/join
+Accept: application/json
+Content-Type: application/json
+
+{
+    "playerId": "b20f4436-e61c-46f0-a83f-45f6a9cb45f9"
+}
+
+### POST to ready up for player 1
+POST http://localhost:9175/api/lobby/{{lobby_id}}/ready
+Accept: application/json
+Content-Type: application/json
+
+{
+    "playerId": "cd281b11-e41e-4f12-93c8-1e9a8bf7403c"
+}
+
+### POST to ready up for player 2
+POST http://localhost:9175/api/lobby/{{lobby_id}}/ready
+Accept: application/json
+Content-Type: application/json
+
+{
+    "playerId": "6ca3863d-d8db-4588-b799-704fdb267814"
+}
+
+### GET lobby information
+GET http://localhost:9175/api/lobby/{{lobby_id}}
+Accept: application/json
+
+### DELETE owner leave lobby
+DELETE http://localhost:9175/api/lobby/{{lobby_id}}/leave
+Accept: application/json
+Content-Type: application/json
+
+{
+    "playerId": "cd281b11-e41e-4f12-93c8-1e9a8bf7403c"
+}
+
+### DELETE last player leave lobby
+DELETE http://localhost:9175/api/lobby/{{lobby_id}}/leave
+Accept: application/json
+Content-Type: application/json
+
+{
+    "playerId": "6ca3863d-d8db-4588-b799-704fdb267814"
+}

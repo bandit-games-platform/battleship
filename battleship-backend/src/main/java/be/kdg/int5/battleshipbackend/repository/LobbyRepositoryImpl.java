@@ -23,4 +23,19 @@ public class LobbyRepositoryImpl implements LobbyRepository {
     public Lobby loadById(LobbyId lobbyId) {
         return lobbyMap.get(lobbyId.uuid());
     }
+
+    @Override
+    public Lobby getLobbyById(LobbyId lobbyId) {
+        return lobbyMap.get(lobbyId.uuid());
+    }
+
+    @Override
+    public void updateLobby(Lobby lobby) {
+        lobbyMap.replace(lobby.getId().uuid(), lobby);
+    }
+
+    @Override
+    public void removeLobbyById(LobbyId lobbyId) {
+        lobbyMap.remove(lobbyId.uuid());
+    }
 }

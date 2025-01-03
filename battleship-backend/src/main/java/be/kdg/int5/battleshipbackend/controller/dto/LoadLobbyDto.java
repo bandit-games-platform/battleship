@@ -8,24 +8,22 @@ import java.util.UUID;
 public class LoadLobbyDto {
     private UUID lobbyId;
     private UUID ownerId;
-    private List<UUID> players;
+    private List<LoadPlayerRecord> loadPlayerRecords;
 
     private String stage;
-    private boolean playerHasReadied;
 
     public LoadLobbyDto() {
     }
 
-    public LoadLobbyDto(UUID lobbyId, UUID ownerId, List<UUID> players) {
-        this(lobbyId, ownerId, players, "queueing", false);
+    public LoadLobbyDto(UUID lobbyId, UUID ownerId, List<LoadPlayerRecord> loadPlayerRecords) {
+        this(lobbyId, ownerId, loadPlayerRecords, "queueing");
     }
 
-    public LoadLobbyDto(UUID lobbyId, UUID ownerId, List<UUID> players, String stage, boolean playerHasReadied) {
+    public LoadLobbyDto(UUID lobbyId, UUID ownerId, List<LoadPlayerRecord> loadPlayerRecords, String stage) {
         this.lobbyId = lobbyId;
         this.ownerId = ownerId;
-        this.players = players;
+        this.loadPlayerRecords = loadPlayerRecords;
         this.stage = stage;
-        this.playerHasReadied = playerHasReadied;
     }
 
     public static LoadLobbyDto from(Lobby domain) {
@@ -34,8 +32,9 @@ public class LoadLobbyDto {
                 domain.getOwnerId().uuid(),
                 domain.getPlayers()
                         .stream()
-                        .map(player -> player.getId().uuid())
-                        .toList()
+                        .map(player -> new LoadPlayerRecord(player.getId().uuid(), player.isReady()))
+                        .toList(),
+                domain.getGameStage().getValue()
         );
     }
 
@@ -47,15 +46,17 @@ public class LoadLobbyDto {
         return ownerId;
     }
 
-    public List<UUID> getPlayers() {
-        return players;
+    public List<LoadPlayerRecord> getPlayers() {
+        return loadPlayerRecords;
     }
 
     public String getStage() {
         return stage;
     }
 
-    public boolean isPlayerHasReadied() {
-        return playerHasReadied;
+    public void setStage(String stage) {
+        this.stage = stage;
     }
+
+    public record LoadPlayerRecord(UUID playerId, boolean ready) {}
 }
