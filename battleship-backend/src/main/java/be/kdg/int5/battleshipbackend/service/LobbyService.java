@@ -59,13 +59,15 @@ public class LobbyService {
 
         existingLobby.addPlayer(playerId);
 
+        // For efficiency and in order to only make one call to the platform, if there are 2 or more players in the lobby
+        // it is closed in the same call as updating the player count
         sdk.patchLobby(
                 new LobbyContext(lobbyId.uuid()),
                 existingLobby.getOwnerId().uuid(),
                 existingLobby.getPlayers().size(),
                 existingLobby.getPlayers().size() >= 2
         );
-        repository.updatedLobby(existingLobby);
+        repository.updateLobby(existingLobby);
 
         logger.info("Player {} has joined lobby {}, there are now {} players in the lobby.",
                 playerId.uuid(), lobbyId.uuid(), existingLobby.getPlayers().size()
@@ -96,7 +98,7 @@ public class LobbyService {
             }
         }
 
-        repository.updatedLobby(loadedLobby);
+        repository.updateLobby(loadedLobby);
         return loadedLobby;
     }
 
@@ -128,7 +130,7 @@ public class LobbyService {
                     loadedLobby.getPlayers().size(),
                     loadedLobby.getPlayers().size() >= 2
             );
-            repository.updatedLobby(loadedLobby);
+            repository.updateLobby(loadedLobby);
         }
 
         return true;

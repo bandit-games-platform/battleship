@@ -25,7 +25,7 @@ public class LobbyRepositoryImpl implements LobbyRepository {
     }
 
     @Override
-    public void updatedLobby(Lobby lobby) {
+    public void updateLobby(Lobby lobby) {
         lobbyMap.replace(lobby.getId().uuid(), lobby);
     }
 
