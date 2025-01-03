@@ -10,6 +10,8 @@
  - meta is for any metadata about the theme
  */
 
+import {ShipType} from "../model/ShipType.ts";
+
 export interface AnimSpriteSheet {
     src: string,
     cols: number,
@@ -24,6 +26,9 @@ export interface BattleshipTheme {
     },
 
     board_background_anim: AnimSpriteSheet,
+    board_grid: { line_width: number, line_color: number, line_alpha: number },
+
+    ships: { [key in ShipType]: string},
 
     effects: {
         explosion_anim: AnimSpriteSheet

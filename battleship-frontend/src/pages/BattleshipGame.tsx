@@ -5,9 +5,10 @@ import {LobbyQueue} from "../scenes/LobbyQueue.tsx";
 import {IdentityContext} from "../context/IdentityContext.ts";
 import {useSearchParams} from "react-router-dom";
 import {ThemeProvider} from "../context/ThemeProvider.tsx";
+import {ArrangeShips} from "../scenes/ArrangeShips.tsx";
 
 export function BattleshipGame() {
-    const [scene, setScene] = useState<string>("main_menu");
+    const [scene, setScene] = useState<string>("arrange_ships");
     const [playerId, setPlayerId] = useState<string>("");
     const [lobbyId, setLobbyId] = useState<string | undefined>(undefined);
     const [searchParams, setSearchParams] = useSearchParams();
@@ -53,6 +54,7 @@ export function BattleshipGame() {
                         Scene: {scene}
                         {scene === "main_menu" && <MainMenu setScene={setScene} setLobbyId={setLobbyId} />}
                         {scene === "lobby_queue" && <LobbyQueue setScene={setScene} />}
+                        {scene === "arrange_ships" && <ArrangeShips />}
                     </>
                 </CanvasManager>
             </ThemeProvider>
