@@ -178,7 +178,5 @@ export function LobbyQueue({setScene, lobbyId, playerId}: LobbyQueueProps) {
         }
     }, [app, canvasSize, currentLobby, lobbyError, lobbyId, lobbyLoading, playerId, readyError, readyPending, readyToggle, setScene, updatedLobby]);
 
-    return (
-        <div></div>
-    );
+    return null;
 }
