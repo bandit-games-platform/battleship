@@ -1,6 +1,7 @@
 package be.kdg.int5.battleshipbackend.domain;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Lobby {
     private final LobbyId id;
@@ -10,7 +11,7 @@ public class Lobby {
     public Lobby(LobbyId id, PlayerId ownerId, List<PlayerId> players) {
         this.id = id;
         this.ownerId = ownerId;
-        this.players = players.stream().map(Player::new).toList();
+        this.players = players.stream().map(Player::new).collect(Collectors.toList());
     }
 
     public Player opponent(Player player) {
@@ -41,7 +42,49 @@ public class Lobby {
         this.players = players;
     }
 
+    public Player getPlayer(PlayerId player) {
+        return this.players.stream().filter(p -> p.getId().equals(player)).findFirst().orElse(null);
+    }
+
+    public void replacePlayer(Player player) {
+        for (int i = 0; i < players.size(); i++) {
+            if (players.get(i).getId().equals(player.getId())) {
+                players.set(i, player);
+                break;
+            }
+        }
+    }
+
     public void addPlayer(PlayerId player) {
         this.players.add(new Player(player));
+    }
+
+    public boolean removePlayer(PlayerId player) {
+        for (Player lobbyPlayer: this.players) {
+            if (lobbyPlayer.getId().equals(player)) {
+                players.remove(lobbyPlayer);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public GameStage getGameStage() {
+        if (players.size() < 2) {
+            return GameStage.QUEUEING;
+        }
+        for (Player player : players) {
+            if (!player.isReady()) return GameStage.QUEUEING;
+        }
+
+        for (Player player : players) {
+            if (player.getBoard() == null) return GameStage.ARRANGING;
+        }
+
+        for (Player player : players) {
+            if (player.hasLostBattle()) return GameStage.FINISHED;
+        }
+
+        return GameStage.BATTLE;
     }
 }
