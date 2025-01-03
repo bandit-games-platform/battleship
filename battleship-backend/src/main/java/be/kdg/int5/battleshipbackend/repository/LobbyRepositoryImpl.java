@@ -1,6 +1,7 @@
 package be.kdg.int5.battleshipbackend.repository;
 
 import be.kdg.int5.battleshipbackend.domain.Lobby;
+import be.kdg.int5.battleshipbackend.domain.LobbyId;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
@@ -16,5 +17,10 @@ public class LobbyRepositoryImpl implements LobbyRepository {
         lobbyMap.put(lobby.getId().uuid(), lobby);
 
         return lobby;
+    }
+
+    @Override
+    public Lobby loadById(LobbyId lobbyId) {
+        return lobbyMap.get(lobbyId.uuid());
     }
 }
