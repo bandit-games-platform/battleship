@@ -5,7 +5,7 @@ import be.kdg.int5.battleshipbackend.domain.LobbyId;
 
 public interface LobbyRepository {
     Lobby save(Lobby lobby);
-    Lobby getLobby(LobbyId lobbyId);
+    Lobby getLobbyById(LobbyId lobbyId);
     void updatedLobby(Lobby lobby);
-    void removeLobby(LobbyId lobbyId);
+    void removeLobbyById(LobbyId lobbyId);
 }

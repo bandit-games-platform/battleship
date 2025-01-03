@@ -43,10 +43,9 @@ public class LobbyService {
     }
 
     public Lobby joinExistingLobby(PlayerId playerId, LobbyId lobbyId) {
-        Lobby existingLobby = repository.getLobby(lobbyId);
+        Lobby existingLobby = repository.getLobbyById(lobbyId);
         if (existingLobby == null) {
-            logger.info("Existing lobby not found, creating a new one");
-            return startNewLobby(playerId);
+            return null;
         }
 
         if (existingLobby.getPlayer(playerId) != null) {
@@ -76,7 +75,7 @@ public class LobbyService {
     }
 
     public Lobby playerReadyToggle(PlayerId playerId, LobbyId lobbyId) {
-        Lobby loadedLobby = repository.getLobby(lobbyId);
+        Lobby loadedLobby = repository.getLobbyById(lobbyId);
         if (loadedLobby == null) return null;
 
         Player player = loadedLobby.getPlayer(playerId);
@@ -102,11 +101,11 @@ public class LobbyService {
     }
 
     public Lobby getLobbyInformation(LobbyId lobbyId) {
-        return repository.getLobby(lobbyId);
+        return repository.getLobbyById(lobbyId);
     }
 
     public boolean leaveLobby(PlayerId playerId, LobbyId lobbyId) {
-        Lobby loadedLobby = repository.getLobby(lobbyId);
+        Lobby loadedLobby = repository.getLobbyById(lobbyId);
         if (loadedLobby == null) return false;
 
         boolean removedPlayer = loadedLobby.removePlayer(playerId);
@@ -138,6 +137,6 @@ public class LobbyService {
     private void removeLobby(LobbyId lobbyId) {
         logger.info("No players left in lobby {}, closing it down.", lobbyId.uuid());
         sdk.closeLobby(new LobbyContext(lobbyId.uuid()));
-        repository.removeLobby(lobbyId);
+        repository.removeLobbyById(lobbyId);
     }
 }

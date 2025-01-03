@@ -20,7 +20,7 @@ public class LobbyRepositoryImpl implements LobbyRepository {
     }
 
     @Override
-    public Lobby getLobby(LobbyId lobbyId) {
+    public Lobby getLobbyById(LobbyId lobbyId) {
         return lobbyMap.get(lobbyId.uuid());
     }
 
@@ -30,7 +30,7 @@ public class LobbyRepositoryImpl implements LobbyRepository {
     }
 
     @Override
-    public void removeLobby(LobbyId lobbyId) {
+    public void removeLobbyById(LobbyId lobbyId) {
         lobbyMap.remove(lobbyId.uuid());
     }
 }
