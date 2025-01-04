@@ -61,7 +61,7 @@ export function BattleshipGame() {
                     <>
                         Scene: {scene}
                         {scene === "main_menu" && <MainMenu setScene={setScene} setLobbyId={setLobbyId} />}
-                        {scene === "lobby_queue" && <LobbyQueue setScene={setScene} lobbyId={lobbyId} playerId={playerId} />}
+                        {scene === "lobby_queue" && <LobbyQueue setScene={setScene} />}
                         {scene === "arrange_ships" && <ArrangeShips setScene={setScene} />}
                         {scene === "battle_scene" && <></>}
                     </>

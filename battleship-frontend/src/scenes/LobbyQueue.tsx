@@ -7,14 +7,14 @@ import {Point} from "pixi.js";
 import {Player} from "../model/Player.ts";
 import {Lobby} from "../model/Lobby.ts";
 import {useReadyToggle} from "../hooks/useReadyToggle.ts";
+import {IdentityContext} from "../context/IdentityContext.ts";
 
 interface LobbyQueueProps {
     setScene: (scene: string) => void
-    lobbyId?: string
-    playerId: string
 }
 
-export function LobbyQueue({setScene, lobbyId, playerId}: LobbyQueueProps) {
+export function LobbyQueue({setScene}: LobbyQueueProps) {
+    const {lobbyId, playerId} = useContext(IdentityContext);
     const {app, canvasSize} = useContext(AppContext);
     const {lobby, isLoading: lobbyLoading, isError: lobbyError} = useGetLobbyState(lobbyId);
     const {readyToggle, isPending: readyPending, isError: readyError, lobby: updatedLobby} = useReadyToggle();
