@@ -1,4 +1,5 @@
 import {Assets, Rectangle, Texture} from "pixi.js";
+import {AnimSpriteSheet} from "../themes/BattleshipTheme.ts";
 
 export async function splitAnimationFramesFromImage(imagePath: string, cols: number, rows: number, unusedFrames: number = 0) {
     const texture = await Assets.load(imagePath);
@@ -14,4 +15,8 @@ export async function splitAnimationFramesFromImage(imagePath: string, cols: num
     }
 
     return {frames, frameWidth, frameHeight};
+}
+
+export async function splitAnimationFrames(anim: AnimSpriteSheet) {
+    return await splitAnimationFramesFromImage(anim.src, anim.cols, anim.rows, anim.unused);
 }

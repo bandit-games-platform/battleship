@@ -20,6 +20,11 @@ public class LobbyRepositoryImpl implements LobbyRepository {
     }
 
     @Override
+    public Lobby loadById(LobbyId lobbyId) {
+        return lobbyMap.get(lobbyId.uuid());
+    }
+
+    @Override
     public Lobby getLobbyById(LobbyId lobbyId) {
         return lobbyMap.get(lobbyId.uuid());
     }
