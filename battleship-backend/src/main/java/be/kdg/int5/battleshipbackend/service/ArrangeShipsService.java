@@ -31,6 +31,15 @@ public class ArrangeShipsService {
             return false;
         }
 
+        if (lobby.getGameStage() != GameStage.ARRANGING) {
+            logger.warn("shipArrangement: Submission denied for lobby {} in bad state: {} by player: {}",
+                    lobbyId,
+                    lobby.getGameStage(),
+                    playerId
+            );
+            return false;
+        }
+
         if (player.getBoard() != null) {
             logger.error("shipArrangement: Player {} in Lobby {} already had a board set: {}",
                     playerId,
