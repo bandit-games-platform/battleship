@@ -27,9 +27,9 @@ public class Ship {
         coordinates.clear();
         for (int i = 0; i < type.getLength(); i++) {
             if (isVertical) {
-                coordinates.add(new Coordinate(placement.row(), placement.col()+i));
-            } else {
                 coordinates.add(new Coordinate(placement.row()+i, placement.col()));
+            } else {
+                coordinates.add(new Coordinate(placement.row(), placement.col()+i));
             }
         }
     }

@@ -14,6 +14,14 @@ public class Lobby {
         this.players = players.stream().map(Player::new).collect(Collectors.toList());
     }
 
+    public Player getPlayerById(PlayerId playerId) {
+        return players
+                .stream()
+                .filter(player -> playerId.equals(player.getId()))
+                .findAny()
+                .orElse(null);
+    }
+
     public Player opponent(Player player) {
         return players
                 .stream()
