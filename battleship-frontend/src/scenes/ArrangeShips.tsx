@@ -6,6 +6,7 @@ import {DraggableShip} from "../components/DraggableShip.tsx";
 import * as PIXI from "pixi.js";
 import {useSubmitShipArrangement} from "../hooks/useSubmitShipArrangement.ts";
 import {IdentityContext} from "../context/IdentityContext.ts";
+import {useGetLobbyState} from "../hooks/useGetLobbyState.ts";
 
 const boardMargin = 10;
 
@@ -13,6 +14,7 @@ type ShipPlacements = { [key in ShipType]: {col: number, row: number, isVertical
 
 
 interface ArrangeShipsRendererProps {
+    hasSubmitted: boolean,
     buttonDisabled: boolean,
     boardSize: number,
     handleAcceptFormation: () => void
@@ -22,7 +24,7 @@ const checkAllShipsPlaced = (placements: ShipPlacements): boolean => {
     return Object.values(ShipType).every(st => placements[st] !== null);
 }
 
-function ArrangeShipsRenderer({boardSize, handleAcceptFormation, buttonDisabled}: ArrangeShipsRendererProps) {
+function ArrangeShipsRenderer({boardSize, handleAcceptFormation, buttonDisabled, hasSubmitted}: ArrangeShipsRendererProps) {
     const {app, canvasSize} = useContext(AppContext);
 
     useEffect(() => {
@@ -33,29 +35,57 @@ function ArrangeShipsRenderer({boardSize, handleAcceptFormation, buttonDisabled}
             background.endFill();
             app.stage.addChild(background);
 
-            const button = new PIXI.Graphics();
-            button.beginFill(buttonDisabled ? 0x444444 : 0x000000);
-            button.drawRect(0, 0, canvasSize.width - (boardSize + boardMargin * 5), 100);
-            button.endFill();
-            button.x = boardMargin * 2;
-            button.y = canvasSize.height - 100 - boardMargin;
-            button.eventMode = 'static';
-            button.cursor = 'pointer';
-            button.on('pointerdown', handleAcceptFormation);
-            const buttonText = new PIXI.Text('Accept Formation', { fontSize: 32, fill: '#ffffff' });
-            buttonText.anchor.set(0.5);
-            buttonText.x = button.width / 2;
-            buttonText.y = button.height / 2;
-            button.addChild(buttonText);
+            if (hasSubmitted) {
+                const text = new PIXI.Text('Waiting for your opponent...', {fontSize: 32, fill: '#00aa00'});
+                text.anchor.set(0.5);
+                text.x = (canvasSize.width - (boardSize + boardMargin)) / 2;
+                text.y = canvasSize.height - 50 - boardMargin
+                app.stage.addChild(text);
 
-            app.stage.addChild(button);
+                return () => {
+                    app.stage.removeChild(text);
+                    app.stage.removeChild(background);
+                    text.destroy(true);
+                    background.destroy(true);
+                }
+            }else {
+
+                const button = new PIXI.Graphics();
+                button.beginFill(buttonDisabled ? 0x444444 : 0x000000);
+                button.drawRect(0, 0, canvasSize.width - (boardSize + boardMargin * 5), 100);
+                button.endFill();
+                button.x = boardMargin * 2;
+                button.y = canvasSize.height - 100 - boardMargin;
+                button.eventMode = 'static';
+                button.cursor = 'pointer';
+                button.on('pointerdown', handleAcceptFormation);
+
+                const buttonText = new PIXI.Text('Accept Formation', {fontSize: 32, fill: '#ffffff'});
+                buttonText.anchor.set(0.5);
+                buttonText.x = button.width / 2;
+                buttonText.y = button.height / 2;
+                button.addChild(buttonText);
+                app.stage.addChild(button);
+
+                return () => {
+                    button.off('pointerdown', handleAcceptFormation);
+                    app.stage.removeChild(button);
+                    app.stage.removeChild(background);
+                    button.destroy(true);
+                    background.destroy(true);
+                }
+            }
         }
-    }, [app, boardSize, buttonDisabled, canvasSize, handleAcceptFormation]);
+    }, [app, boardSize, buttonDisabled, canvasSize, handleAcceptFormation, hasSubmitted]);
 
     return null;
 }
 
-export function ArrangeShips() {
+interface ArrangeShipsProps {
+    setScene: (scene: string) => void
+}
+
+export function ArrangeShips({setScene}: ArrangeShipsProps) {
     const {canvasSize} = useContext(AppContext);
     const {lobbyId, playerId} = useContext(IdentityContext);
 
@@ -66,10 +96,9 @@ export function ArrangeShips() {
         SUBMARINE: null,
         DESTROYER: null
     });
-
     const [isButtonDisabled, setIsButtonDisabled] = useState<boolean>(true);
-
-    const {submitShipArrangement, isPending, isError, isSuccess} = useSubmitShipArrangement();
+    const {submitShipArrangement, isPending, isSuccess} = useSubmitShipArrangement();
+    const {lobby} = useGetLobbyState(lobbyId, isSuccess);
 
     const boardSize = canvasSize.height - 2 * boardMargin;
     const boardX = canvasSize.width - (boardSize + boardMargin);
@@ -139,10 +168,19 @@ export function ArrangeShips() {
             })
         }
     }
+
+    if (isSuccess && lobby && lobby.stage === "battle") {
+        setScene("battle_scene");
+    }
     
     return (
         <>
-            <ArrangeShipsRenderer buttonDisabled={isButtonDisabled || isSuccess || isPending} boardSize={boardSize} handleAcceptFormation={handleAcceptFormation}/>
+            <ArrangeShipsRenderer
+                hasSubmitted={isSuccess}
+                buttonDisabled={isButtonDisabled || isPending}
+                boardSize={boardSize}
+                handleAcceptFormation={handleAcceptFormation}
+            />
             <Board pos={{x: boardX, y: boardMargin}} size={boardSize} />
 
             {Object.values(ShipType).map((shipType, index) => (
