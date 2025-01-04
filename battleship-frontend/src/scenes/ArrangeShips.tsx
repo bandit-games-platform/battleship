@@ -169,9 +169,11 @@ export function ArrangeShips({setScene}: ArrangeShipsProps) {
         }
     }
 
-    if (isSuccess && lobby && lobby.stage === "battle") {
-        setScene("battle_scene");
-    }
+    useEffect(() => {
+        if (isSuccess && lobby && lobby.stage === "battle") {
+            setScene("battle_scene");
+        }
+    }, [isSuccess, lobby, setScene]);
     
     return (
         <>
