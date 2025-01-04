@@ -25,12 +25,7 @@ export function LobbyQueue({setScene, lobbyId, playerId}: LobbyQueueProps) {
         if (lobby) {
             setCurrentLobby(lobby)
 
-            let allReady = true;
-            for (const player of lobby.players) {
-                if (!player.ready) allReady = false;
-            }
-
-            if (allReady) {
+            if (lobby.stage === "arranging") {
                 setScene("arrange_ships");
             }
         }
