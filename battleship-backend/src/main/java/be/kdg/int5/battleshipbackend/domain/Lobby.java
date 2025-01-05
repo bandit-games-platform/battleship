@@ -7,19 +7,13 @@ public class Lobby {
     private final LobbyId id;
     private PlayerId ownerId;
     private List<Player> players;
+    private PlayerId firstToGo;
+    private int turnNumber = 1;
 
     public Lobby(LobbyId id, PlayerId ownerId, List<PlayerId> players) {
         this.id = id;
         this.ownerId = ownerId;
         this.players = players.stream().map(Player::new).collect(Collectors.toList());
-    }
-
-    public Player getPlayerById(PlayerId playerId) {
-        return players
-                .stream()
-                .filter(player -> playerId.equals(player.getId()))
-                .findAny()
-                .orElse(null);
     }
 
     public Player opponent(Player player) {
@@ -44,6 +38,22 @@ public class Lobby {
 
     public void setOwnerId(PlayerId ownerId) {
         this.ownerId = ownerId;
+    }
+
+    public PlayerId getFirstToGo() {
+        return firstToGo;
+    }
+
+    public void setFirstToGo(PlayerId firstToGo) {
+        this.firstToGo = firstToGo;
+    }
+
+    public int getTurnNumber() {
+        return turnNumber;
+    }
+
+    public void addTurn() {
+        this.turnNumber++;
     }
 
     public void setPlayers(List<Player> players) {

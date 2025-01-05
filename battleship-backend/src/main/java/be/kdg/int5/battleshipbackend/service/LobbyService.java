@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 @Service
 public class LobbyService {
@@ -87,7 +88,9 @@ public class LobbyService {
         logger.info("Player {} is {}.", player.getId().uuid(), player.isReady()? "now ready to play" : "not ready to play");
 
         if (loadedLobby.getGameStage() == GameStage.ARRANGING) {
-            logger.info("Everyone in the lobby is ready, time to start the battle(ship)!");
+            Player firstToGo = loadedLobby.getPlayers().get(new Random().nextInt(loadedLobby.getPlayers().size()));
+            loadedLobby.setFirstToGo(firstToGo.getId());
+            logger.info("Everyone in the lobby is ready, time to start the battle(ship)! First to go is {}!", firstToGo.getId());
             sdk.patchLobby(
                     new LobbyContext(lobbyId.uuid()),
                     loadedLobby.getOwnerId().uuid(),
@@ -95,7 +98,7 @@ public class LobbyService {
                     true
             );
         }
-        
+
         repository.updateLobby(loadedLobby);
         return loadedLobby;
     }
