@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -43,14 +45,17 @@ public class BattleController {
 
         List<PlayerShipDto> ourSunkShips = shipListToShipDtoList(player.getBoard().getSunkShips());
 
-        List<CoordinateDto> shotsOnOurShips = opponent.getBoard().getShots().stream().map(
-                shot -> new CoordinateDto(shot.row(), shot.col())
+        Set<Coordinate> allOurShipCoordinates = allShipCoordinates(player);
+        Set<Coordinate> allOpponentShipCoordinates = allShipCoordinates(opponent);
+
+        List<ShotCoordinateDto> shotsOnOurShips = opponent.getBoard().getShots().stream().map(
+                shot -> new ShotCoordinateDto(shot.row(), shot.col(), allOurShipCoordinates.contains(shot))
         ).collect(Collectors.toList());
 
         List<PlayerShipDto> opponentSunkShips = shipListToShipDtoList(opponent.getBoard().getSunkShips());
 
-        List<CoordinateDto> shotsWeTook = player.getBoard().getShots().stream().map(
-                shot -> new CoordinateDto(shot.row(), shot.col())
+        List<ShotCoordinateDto> shotsWeTook = player.getBoard().getShots().stream().map(
+                shot -> new ShotCoordinateDto(shot.row(), shot.col(), allOpponentShipCoordinates.contains(shot))
         ).collect(Collectors.toList());
 
         PlayerShotsShipsDto playerShotsShipsDto = new PlayerShotsShipsDto(
@@ -67,12 +72,24 @@ public class BattleController {
         return ResponseEntity.ok(playerShotsShipsDto);
     }
 
+    private Set<Coordinate> allShipCoordinates(Player player) {
+        Set<Coordinate> allShipCoordinates = new HashSet<>();
+        for (Ship ship: player.getBoard().getAliveShips()) {
+            allShipCoordinates.addAll(ship.getCoordinates());
+        }
+        for (Ship ship: player.getBoard().getSunkShips()) {
+            allShipCoordinates.addAll(ship.getCoordinates());
+        }
+        return allShipCoordinates;
+    }
+
     private List<PlayerShipDto> shipListToShipDtoList(List<Ship> ships) {
         return ships.stream().map(
                 ship -> new PlayerShipDto(
                         ship.getType().name(),
                         new CoordinateDto(ship.getPlacement().row(), ship.getPlacement().col()),
                         ship.isVertical(),
+                        ship.getHitCount() >= ship.getType().getLength(),
                         ship.getCoordinates().stream().map(
                                 coordinate -> new CoordinateDto(coordinate.row(), coordinate.col())
                         ).collect(Collectors.toList())

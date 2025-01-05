@@ -55,6 +55,10 @@ public class Ship {
         return isVertical;
     }
 
+    public int getHitCount() {
+        return hitCount;
+    }
+
     public List<Coordinate> getCoordinates() {
         return coordinates;
     }

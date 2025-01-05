@@ -8,21 +8,21 @@ public class PlayerShotsShipsDto {
     private UUID playerId;
     private List<PlayerShipDto> ourAliveShips;
     private List<PlayerShipDto> ourSunkShips;
-    private List<CoordinateDto> shotsOnOurShips;
+    private List<ShotCoordinateDto> shotsOnOurShips;
 
     private int opponentAliveShips;
     private List<PlayerShipDto> sunkOpponentsShip;
-    private List<CoordinateDto> shotsOnOpponentShips;
+    private List<ShotCoordinateDto> shotsOnOpponentShips;
 
     public PlayerShotsShipsDto(
             UUID lobbyId,
             UUID playerId,
             List<PlayerShipDto> ourAliveShips,
             List<PlayerShipDto> ourSunkShips,
-            List<CoordinateDto> shotsOnOurShips,
+            List<ShotCoordinateDto> shotsOnOurShips,
             int opponentAliveShips,
             List<PlayerShipDto> sunkOpponentsShip,
-            List<CoordinateDto> shotsOnOpponentShips
+            List<ShotCoordinateDto> shotsOnOpponentShips
     ) {
         this.lobbyId = lobbyId;
         this.playerId = playerId;
@@ -66,11 +66,11 @@ public class PlayerShotsShipsDto {
         this.ourSunkShips = ourSunkShips;
     }
 
-    public List<CoordinateDto> getShotsOnOurShips() {
+    public List<ShotCoordinateDto> getShotsOnOurShips() {
         return shotsOnOurShips;
     }
 
-    public void setShotsOnOurShips(List<CoordinateDto> shotsOnOurShips) {
+    public void setShotsOnOurShips(List<ShotCoordinateDto> shotsOnOurShips) {
         this.shotsOnOurShips = shotsOnOurShips;
     }
 
@@ -90,11 +90,11 @@ public class PlayerShotsShipsDto {
         this.sunkOpponentsShip = sunkOpponentsShip;
     }
 
-    public List<CoordinateDto> getShotsOnOpponentShips() {
+    public List<ShotCoordinateDto> getShotsOnOpponentShips() {
         return shotsOnOpponentShips;
     }
 
-    public void setShotsOnOpponentShips(List<CoordinateDto> shotsOnOpponentShips) {
+    public void setShotsOnOpponentShips(List<ShotCoordinateDto> shotsOnOpponentShips) {
         this.shotsOnOpponentShips = shotsOnOpponentShips;
     }
 
@@ -103,8 +103,10 @@ public class PlayerShotsShipsDto {
             String shipType,
             CoordinateDto placementCoordinate,
             boolean isVertical,
+            boolean sunk,
             List<CoordinateDto> shipCoordinate
     ) {}
 
     public record CoordinateDto (int row, int col) {}
+    public record ShotCoordinateDto(int row, int col, boolean miss) {}
 }
