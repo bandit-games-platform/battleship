@@ -55,7 +55,7 @@ public class Ship {
         return isVertical;
     }
 
-    List<Coordinate> getCoordinates() {
+    public List<Coordinate> getCoordinates() {
         return coordinates;
     }
 
