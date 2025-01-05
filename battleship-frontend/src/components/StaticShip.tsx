@@ -41,7 +41,7 @@ export function StaticShip({shipType, size, startPos, vertical, sunk}: StaticShi
                 app.stage.removeChild(shipSprite);
             }
         }
-    }, [app, shipSprite, shipType, size, startPos, vertical]);
+    }, [app, shipSprite, shipType, size, startPos, sunk, vertical]);
 
     return null;
 }

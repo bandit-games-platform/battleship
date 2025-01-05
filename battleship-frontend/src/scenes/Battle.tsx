@@ -109,68 +109,80 @@ export function Battle({setScene}: BattleProps) {
                     <Board pos={{x: yourBoardX, y: boardY}} size={boardSize}/>
                     <Board pos={{x: opponentBoardX, y: boardY}} size={boardSize}/>
 
-                    {battleStatus &&
-                        battleStatus.ourAliveShips.map((ship) => {
-                            const shipYPos = ship.placementCoordinate.row * shipSize + boardY;
-                            const shipXPos = ship.placementCoordinate.col * shipSize + yourBoardX;
-                            return (
-                                <StaticShip
-                                    shipType={ship.shipType}
-                                    size={shipSize}
-                                    startPos={{ x: shipXPos, y: shipYPos }}
-                                    vertical={ship.isVertical}
-                                    sunk={ship.sunk}
-                                    key={ship.shipType.toLowerCase()}
-                                />
-                            );
-                        })
-                        &&
-                        battleStatus.ourSunkShips.map((ship) => {
-                            const shipYPos = ship.placementCoordinate.row * shipSize + boardY;
-                            const shipXPos = ship.placementCoordinate.col * shipSize + yourBoardX;
-                            return (
-                                <StaticShip
-                                    shipType={ship.shipType}
-                                    size={shipSize}
-                                    startPos={{ x: shipXPos, y: shipYPos }}
-                                    vertical={ship.isVertical}
-                                    sunk={ship.sunk}
-                                    key={ship.shipType.toLowerCase()}
-                                />
-                            );
-                        })
-                        &&
-                        battleStatus.shotsOnOurShips.map((shot) => {
-                            const markerYPos = shot.row * shipSize + boardY;
-                            const markerXPos = shot.col * shipSize + yourBoardX;
-                            return (
-                                <ShotMarker size={shipSize} shotPos={{ x: markerXPos, y: markerYPos }} miss={shot.miss}/>
-                            )
-                        })
-                        &&
-                        battleStatus.sunkOpponentsShip.map((ship) => {
-                            const shipYPos = ship.placementCoordinate.row * shipSize + boardY;
-                            const shipXPos = ship.placementCoordinate.col * shipSize - canvasSize.width - (boardSize + boardMargin);
-                            return (
-                                <StaticShip
-                                    shipType={ship.shipType}
-                                    size={shipSize}
-                                    startPos={{ x: shipXPos, y: shipYPos }}
-                                    vertical={ship.isVertical}
-                                    sunk={ship.sunk}
-                                    key={ship.shipType.toLowerCase()}
-                                />
-                            );
-                        })
-                        &&
-                        battleStatus.shotsOnOpponentShips.map((shot) => {
-                            const markerYPos = shot.row * shipSize + boardY;
-                            const markerXPos = shot.col * shipSize + yourBoardX;
-                            return (
-                                <ShotMarker size={shipSize} shotPos={{ x: markerXPos, y: markerYPos }} miss={shot.miss}/>
-                            )
-                        })
-                    }
+                    {battleStatus && (
+                        <>
+                            {battleStatus.ourAliveShips.map((ship) => {
+                                const shipYPos = ship.placementCoordinate.row * shipSize + boardY;
+                                const shipXPos = ship.placementCoordinate.col * shipSize + yourBoardX;
+                                return (
+                                    <StaticShip
+                                        shipType={ship.shipType}
+                                        size={shipSize}
+                                        startPos={{x: shipXPos, y: shipYPos}}
+                                        vertical={ship.isVertical}
+                                        sunk={ship.sunk}
+                                        key={ship.shipType.toLowerCase() + "-alive"}
+                                    />
+                                );
+                            })}
+
+                            {battleStatus.ourSunkShips.map((ship) => {
+                                const shipYPos = ship.placementCoordinate.row * shipSize + boardY;
+                                const shipXPos = ship.placementCoordinate.col * shipSize + yourBoardX;
+                                return (
+                                    <StaticShip
+                                        shipType={ship.shipType}
+                                        size={shipSize}
+                                        startPos={{x: shipXPos, y: shipYPos}}
+                                        vertical={ship.isVertical}
+                                        sunk={ship.sunk}
+                                        key={ship.shipType.toLowerCase() + "-sunk"}
+                                    />
+                                );
+                            })}
+
+                            {battleStatus.shotsOnOurShips.map((shot) => {
+                                const markerYPos = shot.row * shipSize + boardY;
+                                const markerXPos = shot.col * shipSize + yourBoardX;
+                                return (
+                                    <ShotMarker
+                                        size={shipSize}
+                                        shotPos={{x: markerXPos, y: markerYPos}}
+                                        miss={shot.miss}
+                                        key={shot.row + "-" + shot.col + "-our"}
+                                    />
+                                )
+                            })}
+
+                            {battleStatus.sunkOpponentsShip.map((ship) => {
+                                const shipYPos = ship.placementCoordinate.row * shipSize + boardY;
+                                const shipXPos = canvasSize.width - (boardSize + boardMargin) + ship.placementCoordinate.col * shipSize;
+                                return (
+                                    <StaticShip
+                                        shipType={ship.shipType}
+                                        size={shipSize}
+                                        startPos={{x: shipXPos, y: shipYPos}}
+                                        vertical={ship.isVertical}
+                                        sunk={ship.sunk}
+                                        key={ship.shipType.toLowerCase() + "-sunk-opponent"}
+                                    />
+                                );
+                            })}
+
+                            {battleStatus.shotsOnOpponentShips.map((shot) => {
+                                const markerYPos = shot.row * shipSize + boardY;
+                                const markerXPos = shot.col * shipSize + opponentBoardX;
+                                return (
+                                    <ShotMarker
+                                        size={shipSize}
+                                        shotPos={{x: markerXPos, y: markerYPos}}
+                                        miss={shot.miss}
+                                        key={shot.row + "-" + shot.col + "-enemy"}
+                                    />
+                                )
+                            })}
+                        </>
+                    )}
                 </>
             )}
         </>
