@@ -8,6 +8,7 @@ import {Lobby} from "../model/Lobby.ts";
 import {GeneralStatusCheck} from "../utils/generalStatusCheck.ts";
 import {useGetBattleStatus} from "../hooks/useGetBattleStatus.ts";
 import {StaticShip} from "../components/StaticShip.tsx";
+import {ShotMarker} from "../components/ShotMarker.tsx";
 
 interface BattleProps {
     setScene: (scene: string) => void
@@ -42,7 +43,7 @@ function BattleRenderer({lobby, lobbyLoading, lobbyError, boardMargin, boardSize
             yourBoardText.y = (canvasSize.height - boardSize) / 2 / 2;
             app.stage.addChild(yourBoardText);
 
-            const opponentBoardText = new PIXI.Text("Your Attacks", { fontSize: 40, fill: '#191970', fontFamily: "Impact" });
+            const opponentBoardText = new PIXI.Text("Your Shots", { fontSize: 40, fill: '#191970', fontFamily: "Impact" });
             opponentBoardText.anchor.set(0.5);
             opponentBoardText.x = canvasSize.width - boardSize / 2 - boardMargin;
             opponentBoardText.y = (canvasSize.height - boardSize) / 2 / 2;
@@ -118,9 +119,56 @@ export function Battle({setScene}: BattleProps) {
                                     size={shipSize}
                                     startPos={{ x: shipXPos, y: shipYPos }}
                                     vertical={ship.isVertical}
+                                    sunk={ship.sunk}
                                     key={ship.shipType.toLowerCase()}
                                 />
                             );
+                        })
+                        &&
+                        battleStatus.ourSunkShips.map((ship) => {
+                            const shipYPos = ship.placementCoordinate.row * shipSize + boardY;
+                            const shipXPos = ship.placementCoordinate.col * shipSize + yourBoardX;
+                            return (
+                                <StaticShip
+                                    shipType={ship.shipType}
+                                    size={shipSize}
+                                    startPos={{ x: shipXPos, y: shipYPos }}
+                                    vertical={ship.isVertical}
+                                    sunk={ship.sunk}
+                                    key={ship.shipType.toLowerCase()}
+                                />
+                            );
+                        })
+                        &&
+                        battleStatus.shotsOnOurShips.map((shot) => {
+                            const markerYPos = shot.row * shipSize + boardY;
+                            const markerXPos = shot.col * shipSize + yourBoardX;
+                            return (
+                                <ShotMarker size={shipSize} shotPos={{ x: markerXPos, y: markerYPos }} miss={shot.miss}/>
+                            )
+                        })
+                        &&
+                        battleStatus.sunkOpponentsShip.map((ship) => {
+                            const shipYPos = ship.placementCoordinate.row * shipSize + boardY;
+                            const shipXPos = ship.placementCoordinate.col * shipSize - canvasSize.width - (boardSize + boardMargin);
+                            return (
+                                <StaticShip
+                                    shipType={ship.shipType}
+                                    size={shipSize}
+                                    startPos={{ x: shipXPos, y: shipYPos }}
+                                    vertical={ship.isVertical}
+                                    sunk={ship.sunk}
+                                    key={ship.shipType.toLowerCase()}
+                                />
+                            );
+                        })
+                        &&
+                        battleStatus.shotsOnOpponentShips.map((shot) => {
+                            const markerYPos = shot.row * shipSize + boardY;
+                            const markerXPos = shot.col * shipSize + yourBoardX;
+                            return (
+                                <ShotMarker size={shipSize} shotPos={{ x: markerXPos, y: markerYPos }} miss={shot.miss}/>
+                            )
                         })
                     }
                 </>

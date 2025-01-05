@@ -21,6 +21,10 @@ export const themes: BattleshipTheme[] = [
             SUBMARINE: assets + "concept/submarine.png",
             DESTROYER: assets + "concept/destroyer.png",
         },
+        markers: {
+            MISS: assets + "concept/ship_miss_marker.png",
+            HIT: assets + "concept/ship_hit_marker.png",
+        },
         effects: {
             explosion_anim: {
                 src: assets + "concept/effects/explosion.png",

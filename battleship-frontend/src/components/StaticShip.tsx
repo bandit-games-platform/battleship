@@ -8,10 +8,11 @@ interface StaticShipProps {
     shipType: ShipType,
     size: number, // "beam" of the ship to match the board grid size
     startPos: {x: number, y: number},
-    vertical: boolean
+    vertical: boolean,
+    sunk: boolean
 }
 
-export function StaticShip({shipType, size, startPos, vertical}: StaticShipProps) {
+export function StaticShip({shipType, size, startPos, vertical, sunk}: StaticShipProps) {
     const {app} = useContext(AppContext);
     const {theme} = useContext(ThemeContext);
 
@@ -31,6 +32,8 @@ export function StaticShip({shipType, size, startPos, vertical}: StaticShipProps
             shipSprite.x = startPos.x + (vertical? size/2 : 0);
             shipSprite.y = startPos.y + (vertical? 0 : size/2);
             shipSprite.angle = vertical ? 90 : 0;
+
+            if (sunk) shipSprite.tint = 0xEE4B2B
 
             app.stage.addChild(shipSprite);
 
