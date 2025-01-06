@@ -33,6 +33,7 @@ export interface BattleshipTheme {
     markers: {MISS: string, HIT: string},
 
     effects: {
-        explosion_anim: AnimSpriteSheet
+        explosion_anim: AnimSpriteSheet,
+        splash_anim: AnimSpriteSheet,
     },
 }

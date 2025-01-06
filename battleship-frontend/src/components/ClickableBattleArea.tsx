@@ -18,9 +18,10 @@ interface ClickableBattleAreaProps {
     squareSize: number
     lobby: Lobby
     hitDisplay: (col: number, row: number) => void
+    missDisplay: (col: number, row: number) => void
 }
 
-export function ClickableBattleArea({pos, size, squareSize, lobby, hitDisplay}: ClickableBattleAreaProps) {
+export function ClickableBattleArea({pos, size, squareSize, lobby, hitDisplay, missDisplay}: ClickableBattleAreaProps) {
     const {app, canvasSize} = useContext(AppContext);
     const {playerId} = useContext(IdentityContext);
     const queryClient = useQueryClient()
@@ -34,11 +35,13 @@ export function ClickableBattleArea({pos, size, squareSize, lobby, hitDisplay}: 
             const dto: ShotDto = {identity, column: col, row};
             const result = await shootShot(dto);
 
-            await queryClient.invalidateQueries({queryKey: ['lobby', lobby.lobbyId]})
+            await queryClient.invalidateQueries({queryKey: ['lobby', lobby.lobbyId], refetchType: "all"})
 
             if (result) {
                 if (result.status === 200 && (result.shotResult.shotResult === "HIT" || result.shotResult.shotResult === "SUNK")) {
                     hitDisplay(col, row);
+                } else if (result.status === 200 && (result.shotResult.shotResult === "MISS")) {
+                    missDisplay(col, row);
                 }
             }
         }
@@ -78,7 +81,7 @@ export function ClickableBattleArea({pos, size, squareSize, lobby, hitDisplay}: 
                 confirmationBox.y = canvasSize.height / 2 - 200 / 2;
 
                 const columnLetter = String.fromCharCode(65 + col);
-                const confirmText = new PIXI.Text("Do you want to shoot at: " + columnLetter + row + "?", { fontSize: 24, fill: '#ffffff' });
+                const confirmText = new PIXI.Text("Do you want to shoot at: " + columnLetter + (row + 1) + "?", { fontSize: 24, fill: '#ffffff' });
                 confirmText.anchor.set(0.5)
                 confirmText.x = confirmationBox.width / 2;
                 confirmText.y = confirmationBox.height / 3;

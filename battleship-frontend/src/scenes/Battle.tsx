@@ -11,6 +11,7 @@ import {StaticShip} from "../components/StaticShip.tsx";
 import {ShotMarker} from "../components/ShotMarker.tsx";
 import {ClickableBattleArea} from "../components/ClickableBattleArea.tsx";
 import {ExplosionSprite} from "../components/effects/ExplosionSprite.tsx";
+import {SplashSprite} from "../components/effects/SplashSprite.tsx";
 
 interface BattleProps {
     setScene: (scene: string) => void
@@ -89,10 +90,16 @@ export function Battle({setScene}: BattleProps) {
     const {lobby, isLoading: lobbyLoading, isError: lobbyError} = useGetLobbyState(lobbyId);
     const [explosionPosition, setExplosionPosition] = useState({col: -1, row: -1})
     const [showExplosion, setShowExplosion] = useState(false);
+    const [splashPosition, setSplashPosition] = useState({col: -1, row: -1})
+    const [showSplash, setShowSplash] = useState(false);
     const {battleStatus} = useGetBattleStatus(playerId, lobbyId?lobbyId:"")
 
     const toggleExplosion = () => {
         setShowExplosion(!showExplosion)
+    }
+
+    const toggleSplash = () => {
+        setShowSplash(!showSplash)
     }
 
     useEffect(() => {
@@ -201,7 +208,7 @@ export function Battle({setScene}: BattleProps) {
                         </>
                     )}
 
-                    {lobby && (
+                    {battleStatus && lobby && (
                         <ClickableBattleArea
                             pos={{x: opponentBoardX, y: boardY}}
                             size={boardSize}
@@ -212,6 +219,14 @@ export function Battle({setScene}: BattleProps) {
                                 const explosionY = boardY + (row * shipSize) + shipSize / 2
                                 setExplosionPosition({col: explosionX, row: explosionY});
                                 setShowExplosion(true);
+                                battleStatus.shotsOnOpponentShips.push({col, row, miss: false});
+                            }}
+                            missDisplay={(col: number, row: number) => {
+                                const splashX = opponentBoardX + (col * shipSize) + shipSize / 2
+                                const splashY = boardY + (row * shipSize) + shipSize / 2
+                                setSplashPosition({col: splashX, row: splashY});
+                                setShowSplash(true);
+                                battleStatus.shotsOnOpponentShips.push({col, row, miss: true});
                             }}
                         />
                     )}
@@ -221,6 +236,13 @@ export function Battle({setScene}: BattleProps) {
                         y={explosionPosition.row}
                         show={showExplosion}
                         toggleShow={toggleExplosion}
+                    />
+
+                    <SplashSprite
+                        x={splashPosition.col}
+                        y={splashPosition.row}
+                        show={showSplash}
+                        toggleShow={toggleSplash}
                     />
                 </>
             )}

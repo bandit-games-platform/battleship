@@ -31,6 +31,12 @@ export const themes: BattleshipTheme[] = [
                 cols: 5,
                 rows: 2,
                 speed: 0.25
+            },
+            splash_anim: {
+                src: assets + "concept/effects/splash.png",
+                cols: 7,
+                rows: 1,
+                speed: 0.25
             }
         }
     },
