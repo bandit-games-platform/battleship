@@ -4,8 +4,6 @@ import be.kdg.int5.battleshipbackend.domain.*;
 import be.kdg.int5.battleshipbackend.repository.LobbyRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -26,8 +24,7 @@ public class BattleService {
         Player opponent = lobby.opponent(player);
         if (opponent == null) return null;
 
-        if (!((lobby.getFirstToGo().equals(player.getId()) && lobby.getTurnNumber() % 2 != 0) ||
-                (lobby.getFirstToGo().equals(opponent.getId()) && lobby.getTurnNumber() % 2 == 0))) {
+        if (lobby.playersTurn() != player.getId()) {
             return null;
         }
 

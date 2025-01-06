@@ -105,4 +105,16 @@ public class Lobby {
 
         return GameStage.BATTLE;
     }
+
+    public PlayerId playersTurn() {
+        if (turnNumber % 2 == 0) {
+            return players
+                    .stream()
+                    .filter(p -> !firstToGo.equals(p.getId()))
+                    .findAny()
+                    .orElseThrow().getId();
+        } else {
+            return firstToGo;
+        }
+    }
 }

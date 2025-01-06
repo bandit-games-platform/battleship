@@ -9,6 +9,7 @@ import {GeneralStatusCheck} from "../utils/generalStatusCheck.ts";
 import {useGetBattleStatus} from "../hooks/useGetBattleStatus.ts";
 import {StaticShip} from "../components/StaticShip.tsx";
 import {ShotMarker} from "../components/ShotMarker.tsx";
+import {ClickableBattleArea} from "../components/ClickableBattleArea.tsx";
 
 interface BattleProps {
     setScene: (scene: string) => void
@@ -24,6 +25,7 @@ interface BattleRendererProps {
 
 function BattleRenderer({lobby, lobbyLoading, lobbyError, boardMargin, boardSize}: BattleRendererProps) {
     const {app, canvasSize} = useContext(AppContext);
+    const {playerId} = useContext(IdentityContext);
 
     useEffect(() => {
         if (app && app.stage) {
@@ -49,14 +51,27 @@ function BattleRenderer({lobby, lobbyLoading, lobbyError, boardMargin, boardSize
             opponentBoardText.y = (canvasSize.height - boardSize) / 2 / 2;
             app.stage.addChild(opponentBoardText);
 
+            const turnText = new PIXI.Text("Turn", { fontSize: 40, fill: '#097969', fontFamily: "Impact" })
+            if (lobby.turnOf != playerId) {
+                turnText.text = "Waiting for Opponents Shot...."
+            } else {
+                turnText.text = "It's your turn!"
+            }
+            turnText.anchor.set(0.5);
+            turnText.x = canvasSize.width / 2;
+            turnText.y = (boardSize + (canvasSize.height - boardSize)) - turnText.height;
+            app.stage.addChild(turnText);
+
             return () => {
                 app.stage.removeChild(background);
                 app.stage.removeChild(yourBoardText);
                 app.stage.removeChild(opponentBoardText);
+                app.stage.removeChild(turnText);
 
                 background.destroy(true);
                 yourBoardText.destroy(true);
                 opponentBoardText.destroy(true);
+                turnText.destroy(true);
             }
         }
     }, [app, canvasSize, lobby, lobbyError, lobbyLoading]);
@@ -83,10 +98,6 @@ export function Battle({setScene}: BattleProps) {
         }
     }, [lobby, setScene])
 
-    useEffect(() => {
-        console.log(battleStatus)
-    }, [battleStatus])
-
     const boardMargin = 20;
     const boardSize = (canvasSize.width / 2) - boardMargin * 3;
     const shipSize = boardSize / BOARD_CELLS;
@@ -104,6 +115,7 @@ export function Battle({setScene}: BattleProps) {
                 boardMargin={boardMargin}
                 boardSize={boardSize}
             />
+
             {!lobbyLoading && !lobbyError && (
                 <>
                     <Board pos={{x: yourBoardX, y: boardY}} size={boardSize}/>
@@ -184,6 +196,10 @@ export function Battle({setScene}: BattleProps) {
                         </>
                     )}
                 </>
+            )}
+
+            {lobby && (
+                <ClickableBattleArea pos={{x: opponentBoardX, y: boardY}} size={boardSize} squareSize={shipSize} lobby={lobby}/>
             )}
         </>
     )

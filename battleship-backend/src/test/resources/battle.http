@@ -1,4 +1,4 @@
-@lobby_id = f21a1b41-8884-4d69-9455-09b8f453ed82
+@lobby_id = e5b12614-02fc-4438-ba54-6f53ae64f0ac
 
 ### POST to ready up for player 1
 POST http://localhost:9175/api/lobby/{{lobby_id}}/ready
