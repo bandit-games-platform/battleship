@@ -96,7 +96,6 @@ export function Battle({setScene}: BattleProps) {
     }
 
     useEffect(() => {
-        console.log(lobby)
         if (lobby) {
             if (lobby.stage === "finished") {
                 setScene("end_state")

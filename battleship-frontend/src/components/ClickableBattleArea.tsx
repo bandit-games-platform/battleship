@@ -37,7 +37,6 @@ export function ClickableBattleArea({pos, size, squareSize, lobby, hitDisplay}: 
             await queryClient.invalidateQueries({queryKey: ['lobby', lobby.lobbyId]})
 
             if (result) {
-                console.log(result)
                 if (result.status === 200 && (result.shotResult.shotResult === "HIT" || result.shotResult.shotResult === "SUNK")) {
                     hitDisplay(col, row);
                 }
@@ -71,7 +70,7 @@ export function ClickableBattleArea({pos, size, squareSize, lobby, hitDisplay}: 
                 const row = Math.floor(boardRelPos.y / squareSize);
 
                 confirmationBox = new PIXI.Graphics();
-                confirmationBox.zIndex = 10
+                confirmationBox.zIndex = 25
                 confirmationBox.beginFill(0x000000, 1);
                 confirmationBox.drawRect(0, 0, 400, 200);
                 confirmationBox.endFill();
