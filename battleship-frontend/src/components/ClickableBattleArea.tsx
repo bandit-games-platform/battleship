@@ -145,7 +145,7 @@ export function ClickableBattleArea({pos, size, squareSize, lobby, hitDisplay, m
                 clickableArea.destroy(true);
             }
         }
-    }, [app, pos, size, squareSize, canvasSize, lobby.turnOf, playerId, lobby.lobbyId, shootShot]);
+    }, [app, pos, size, squareSize, canvasSize, lobby.turnOf, playerId, lobby.lobbyId, shootShot, queryClient, hitDisplay, missDisplay, shotPending]);
 
     return null;
 }

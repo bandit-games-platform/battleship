@@ -17,7 +17,6 @@ export function SplashSprite({x,y, show, toggleShow}: SplashSpriteProps) {
 
     useEffect(() => {
         if (app && app.stage) {
-            console.log(show)
             if (!show) return;
 
             textureAnimator(theme.effects.splash_anim, app, x, y).then(toggleShow);

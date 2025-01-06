@@ -12,6 +12,7 @@ import {ShotMarker} from "../components/ShotMarker.tsx";
 import {ClickableBattleArea} from "../components/ClickableBattleArea.tsx";
 import {ExplosionSprite} from "../components/effects/ExplosionSprite.tsx";
 import {SplashSprite} from "../components/effects/SplashSprite.tsx";
+import {NewShotDisplay} from "../components/NewShotDisplay.tsx";
 
 interface BattleProps {
     setScene: (scene: string) => void
@@ -92,6 +93,8 @@ export function Battle({setScene}: BattleProps) {
     const [showExplosion, setShowExplosion] = useState(false);
     const [splashPosition, setSplashPosition] = useState({col: -1, row: -1})
     const [showSplash, setShowSplash] = useState(false);
+    const [previousHitsOnFleet, setPreviousHitsOnFleet] = useState<{col: number, row: number, miss: boolean}[]>()
+    const [newHits, setNewHits] = useState<{col: number, row: number, miss: boolean}[]>()
     const {battleStatus} = useGetBattleStatus(playerId, lobbyId?lobbyId:"")
 
     const toggleExplosion = () => {
@@ -102,6 +105,38 @@ export function Battle({setScene}: BattleProps) {
         setShowSplash(!showSplash)
     }
 
+    const compareShotArrays = (
+        knownHits: { col: number; row: number; miss: boolean }[],
+        newHits: { col: number; row: number; miss: boolean }[]
+    ) => {
+        const newEntries = newHits.filter(
+            (hit) =>
+                !knownHits.some(
+                    (knownHit) =>
+                        hit.col === knownHit.col &&
+                        hit.row === knownHit.row &&
+                        hit.miss === knownHit.miss
+                )
+        );
+
+        const areDifferent = newEntries.length > 0;
+
+        return { areDifferent, newEntries };
+    }
+
+    const removeHit = (shotToRemove: { col: number; row: number; miss: boolean }) => {
+        if (newHits) {
+            setNewHits(() =>
+                newHits.filter(
+                    (shot) =>
+                        shot.col !== shotToRemove.col ||
+                        shot.row !== shotToRemove.row ||
+                        shot.miss !== shotToRemove.miss
+                )
+            );
+        }
+    };
+
     useEffect(() => {
         if (lobby) {
             if (lobby.stage === "finished") {
@@ -109,6 +144,22 @@ export function Battle({setScene}: BattleProps) {
             }
         }
     }, [lobby, setScene])
+
+    useEffect(() => {
+        if (battleStatus) {
+            const newHits = battleStatus.shotsOnOurShips;
+
+            const {areDifferent, newEntries} = compareShotArrays(
+                previousHitsOnFleet || [],
+                newHits
+            )
+
+            if (areDifferent) {
+                setNewHits(newEntries);
+                setPreviousHitsOnFleet(newHits);
+            }
+        }
+    }, [battleStatus, previousHitsOnFleet])
 
     const boardMargin = 20;
     const boardSize = (canvasSize.width / 2) - boardMargin * 3;
@@ -205,6 +256,14 @@ export function Battle({setScene}: BattleProps) {
                                     />
                                 )
                             })}
+
+                            {newHits && newHits.map((shot) => (
+                                <NewShotDisplay
+                                    shot={shot}
+                                    key={shot.col + "-" + shot.row}
+                                    onDisplayComplete={() => removeHit(shot)}
+                                />
+                            ))}
                         </>
                     )}
 
