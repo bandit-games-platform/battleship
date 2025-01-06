@@ -1,5 +1,5 @@
 import {Board, BOARD_CELLS} from "../components/Board.tsx";
-import {useContext, useEffect} from "react";
+import {useContext, useEffect, useState} from "react";
 import {AppContext} from "../context/AppContext.ts";
 import * as PIXI from "pixi.js";
 import {IdentityContext} from "../context/IdentityContext.ts";
@@ -10,6 +10,7 @@ import {useGetBattleStatus} from "../hooks/useGetBattleStatus.ts";
 import {StaticShip} from "../components/StaticShip.tsx";
 import {ShotMarker} from "../components/ShotMarker.tsx";
 import {ClickableBattleArea} from "../components/ClickableBattleArea.tsx";
+import {ExplosionSprite} from "../components/effects/ExplosionSprite.tsx";
 
 interface BattleProps {
     setScene: (scene: string) => void
@@ -29,6 +30,8 @@ function BattleRenderer({lobby, lobbyLoading, lobbyError, boardMargin, boardSize
 
     useEffect(() => {
         if (app && app.stage) {
+            app.stage.sortableChildren = true;
+
             const background = new PIXI.Graphics();
             background.beginFill(0x5F9EA0);
             background.drawRect(0, 0, canvasSize.width, canvasSize.height);
@@ -84,16 +87,19 @@ export function Battle({setScene}: BattleProps) {
     const {canvasSize} = useContext(AppContext);
     const {lobbyId, playerId} = useContext(IdentityContext);
     const {lobby, isLoading: lobbyLoading, isError: lobbyError} = useGetLobbyState(lobbyId);
+    const [explosionPosition, setExplosionPosition] = useState({col: -1, row: -1})
+    const [showExplosion, setShowExplosion] = useState(false);
     const {battleStatus} = useGetBattleStatus(playerId, lobbyId?lobbyId:"")
+
+    const toggleExplosion = () => {
+        setShowExplosion(!showExplosion)
+    }
 
     useEffect(() => {
         console.log(lobby)
         if (lobby) {
             if (lobby.stage === "finished") {
                 setScene("end_state")
-            }
-            if (lobby.stage !== "battle") {
-                setScene("arrange_ships");
             }
         }
     }, [lobby, setScene])
@@ -195,11 +201,29 @@ export function Battle({setScene}: BattleProps) {
                             })}
                         </>
                     )}
-                </>
-            )}
 
-            {lobby && (
-                <ClickableBattleArea pos={{x: opponentBoardX, y: boardY}} size={boardSize} squareSize={shipSize} lobby={lobby}/>
+                    {lobby && (
+                        <ClickableBattleArea
+                            pos={{x: opponentBoardX, y: boardY}}
+                            size={boardSize}
+                            squareSize={shipSize}
+                            lobby={lobby}
+                            hitDisplay={(col: number, row: number) => {
+                                const explosionX = opponentBoardX + (col * shipSize) + shipSize / 2
+                                const explosionY = boardY + (row * shipSize) + shipSize / 2
+                                setExplosionPosition({col: explosionX, row: explosionY});
+                                setShowExplosion(true);
+                            }}
+                        />
+                    )}
+
+                    <ExplosionSprite
+                        x={explosionPosition.col}
+                        y={explosionPosition.row}
+                        show={showExplosion}
+                        toggleShow={toggleExplosion}
+                    />
+                </>
             )}
         </>
     )

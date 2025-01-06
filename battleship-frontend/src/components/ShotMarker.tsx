@@ -23,6 +23,7 @@ export function ShotMarker({size, shotPos, miss}: ShotMarkerProps) {
 
     useEffect(() => {
         if (app && app.stage && shotSprite) {
+            shotSprite.zIndex = 5
             shotSprite.height = (size / 3) * 2;
             shotSprite.width = (size / 3) * 2;
             shotSprite.anchor.set(0, 0);

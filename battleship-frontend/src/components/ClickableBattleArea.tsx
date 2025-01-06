@@ -17,9 +17,10 @@ interface ClickableBattleAreaProps {
     size: number
     squareSize: number
     lobby: Lobby
+    hitDisplay: (col: number, row: number) => void
 }
 
-export function ClickableBattleArea({pos, size, squareSize, lobby}: ClickableBattleAreaProps) {
+export function ClickableBattleArea({pos, size, squareSize, lobby, hitDisplay}: ClickableBattleAreaProps) {
     const {app, canvasSize} = useContext(AppContext);
     const {playerId} = useContext(IdentityContext);
     const queryClient = useQueryClient()
@@ -37,6 +38,9 @@ export function ClickableBattleArea({pos, size, squareSize, lobby}: ClickableBat
 
             if (result) {
                 console.log(result)
+                if (result.status === 200 && (result.shotResult.shotResult === "HIT" || result.shotResult.shotResult === "SUNK")) {
+                    hitDisplay(col, row);
+                }
             }
         }
 
@@ -67,6 +71,7 @@ export function ClickableBattleArea({pos, size, squareSize, lobby}: ClickableBat
                 const row = Math.floor(boardRelPos.y / squareSize);
 
                 confirmationBox = new PIXI.Graphics();
+                confirmationBox.zIndex = 10
                 confirmationBox.beginFill(0x000000, 1);
                 confirmationBox.drawRect(0, 0, 400, 200);
                 confirmationBox.endFill();
