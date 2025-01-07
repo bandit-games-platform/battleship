@@ -61,8 +61,7 @@ public class BattleController {
         ).collect(Collectors.toList());
 
         PlayerShotsShipsDto playerShotsShipsDto = new PlayerShotsShipsDto(
-                lobby.getId().uuid(),
-                player.getId().uuid(),
+                new IdentityDto(lobby.getId().uuid(), player.getId().uuid()),
                 ourAliveShips,
                 ourSunkShips,
                 shotsOnOurShips,

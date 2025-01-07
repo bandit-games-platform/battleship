@@ -4,8 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class PlayerShotsShipsDto {
-    private UUID lobbyId;
-    private UUID playerId;
+    private IdentityDto identity;
     private List<PlayerShipDto> ourAliveShips;
     private List<PlayerShipDto> ourSunkShips;
     private List<ShotCoordinateDto> shotsOnOurShips;
@@ -15,8 +14,7 @@ public class PlayerShotsShipsDto {
     private List<ShotCoordinateDto> shotsOnOpponentShips;
 
     public PlayerShotsShipsDto(
-            UUID lobbyId,
-            UUID playerId,
+            IdentityDto identity,
             List<PlayerShipDto> ourAliveShips,
             List<PlayerShipDto> ourSunkShips,
             List<ShotCoordinateDto> shotsOnOurShips,
@@ -24,8 +22,7 @@ public class PlayerShotsShipsDto {
             List<PlayerShipDto> sunkOpponentsShips,
             List<ShotCoordinateDto> shotsOnOpponentShips
     ) {
-        this.lobbyId = lobbyId;
-        this.playerId = playerId;
+        this.identity = identity;
         this.ourAliveShips = ourAliveShips;
         this.ourSunkShips = ourSunkShips;
         this.shotsOnOurShips = shotsOnOurShips;
@@ -34,20 +31,12 @@ public class PlayerShotsShipsDto {
         this.shotsOnOpponentShips = shotsOnOpponentShips;
     }
 
-    public UUID getLobbyId() {
-        return lobbyId;
+    public IdentityDto getIdentity() {
+        return identity;
     }
 
-    public void setLobbyId(UUID lobbyId) {
-        this.lobbyId = lobbyId;
-    }
-
-    public UUID getPlayerId() {
-        return playerId;
-    }
-
-    public void setPlayerId(UUID playerId) {
-        this.playerId = playerId;
+    public void setIdentity(IdentityDto identity) {
+        this.identity = identity;
     }
 
     public List<PlayerShipDto> getOurAliveShips() {
