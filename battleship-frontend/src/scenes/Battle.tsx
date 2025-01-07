@@ -96,9 +96,7 @@ function BattleRenderer({lobby, lobbyLoading, lobbyError, boardMargin, boardSize
             }
 
             musicIconDisplay
-                .on("pointerdown", toggleMusic)
-                .on("pointerover", () => console.log("Hovering now"))
-                .on("pointerout", () => console.log("No longer hovering"));
+                .on("pointerdown", toggleMusic);
             app.stage.addChild(musicIconDisplay);
 
             return () => {
