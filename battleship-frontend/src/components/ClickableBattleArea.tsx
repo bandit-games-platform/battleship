@@ -17,11 +17,11 @@ interface ClickableBattleAreaProps {
     size: number
     squareSize: number
     lobby: Lobby
-    hitDisplay: (col: number, row: number) => void
-    missDisplay: (col: number, row: number) => void
+    showHitMarker: (col: number, row: number) => void
+    showMissMarker: (col: number, row: number) => void
 }
 
-export function ClickableBattleArea({pos, size, squareSize, lobby, hitDisplay, missDisplay}: ClickableBattleAreaProps) {
+export function ClickableBattleArea({pos, size, squareSize, lobby, showHitMarker, showMissMarker}: ClickableBattleAreaProps) {
     const {app, canvasSize} = useContext(AppContext);
     const {playerId} = useContext(IdentityContext);
     const queryClient = useQueryClient()
@@ -39,9 +39,9 @@ export function ClickableBattleArea({pos, size, squareSize, lobby, hitDisplay, m
 
             if (result) {
                 if (result.status === 200 && (result.shotResult.shotResult === "HIT" || result.shotResult.shotResult === "SUNK")) {
-                    hitDisplay(col, row);
+                    showHitMarker(col, row);
                 } else if (result.status === 200 && (result.shotResult.shotResult === "MISS")) {
-                    missDisplay(col, row);
+                    showMissMarker(col, row);
                 }
             }
         }
@@ -145,7 +145,7 @@ export function ClickableBattleArea({pos, size, squareSize, lobby, hitDisplay, m
                 clickableArea.destroy(true);
             }
         }
-    }, [app, pos, size, squareSize, canvasSize, lobby.turnOf, playerId, lobby.lobbyId, shootShot, queryClient, hitDisplay, missDisplay, shotPending]);
+    }, [app, pos, size, squareSize, canvasSize, lobby.turnOf, playerId, lobby.lobbyId, shootShot, queryClient, showHitMarker, showMissMarker, shotPending]);
 
     return null;
 }

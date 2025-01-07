@@ -86,7 +86,7 @@ public class BattleController {
 
             return ResponseEntity.ok(new ShotResultDto(shotResult.resultType().name()));
         } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(HttpStatus.ALREADY_REPORTED);
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
     }
 
