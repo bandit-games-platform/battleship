@@ -18,11 +18,11 @@ interface ClickableBattleAreaProps {
     size: number
     squareSize: number
     lobby: Lobby
-    hitDisplay: (col: number, row: number) => void
-    missDisplay: (col: number, row: number) => void
+    showHitMarker: (col: number, row: number) => void
+    showMissMarker: (col: number, row: number) => void
 }
 
-export function ClickableBattleArea({pos, size, squareSize, lobby, hitDisplay, missDisplay}: ClickableBattleAreaProps) {
+export function ClickableBattleArea({pos, size, squareSize, lobby, showHitMarker, showMissMarker}: ClickableBattleAreaProps) {
     const {app, canvasSize} = useContext(AppContext);
     const {theme} = useContext(ThemeContext);
     const {playerId} = useContext(IdentityContext);
@@ -43,12 +43,12 @@ export function ClickableBattleArea({pos, size, squareSize, lobby, hitDisplay, m
                 if (result.status === 200 && (result.shotResult.shotResult === "HIT" || result.shotResult.shotResult === "SUNK")) {
                     const hitAudio = new Audio(theme.sounds.hit);
                     await hitAudio.play()
-                    hitDisplay(col, row);
+                    showHitMarker(col, row);
                     hitAudio.remove()
                 } else if (result.status === 200 && (result.shotResult.shotResult === "MISS")) {
                     const missAudio = new Audio(theme.sounds.miss);
                     await missAudio.play()
-                    missDisplay(col, row);
+                    showMissMarker(col, row);
                     missAudio.remove()
                 }
             }
@@ -154,7 +154,7 @@ export function ClickableBattleArea({pos, size, squareSize, lobby, hitDisplay, m
                 clickableArea.destroy(true);
             }
         }
-    }, [app, pos, size, squareSize, canvasSize, lobby.turnOf, playerId, lobby.lobbyId, shootShot, queryClient, hitDisplay, missDisplay, shotPending, theme.sounds.hit, theme.sounds.miss]);
+    }, [app, pos, size, squareSize, canvasSize, lobby.turnOf, playerId, lobby.lobbyId, shootShot, queryClient, showHitMarker, showMissMarker, shotPending, theme.sounds.hit, theme.sounds.miss]);
 
     return null;
 }

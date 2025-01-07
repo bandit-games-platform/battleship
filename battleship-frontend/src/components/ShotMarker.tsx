@@ -16,7 +16,7 @@ export function ShotMarker({size, shotPos, miss}: ShotMarkerProps) {
     const [shotSprite, setShotSprite] = useState<Sprite>();
 
     useEffect(() => {
-        Assets.load(theme.markers[miss ? "MISS": "HIT"]).then(res => {
+        Assets.load(theme.markers[miss ? "miss": "hit"]).then(res => {
             setShotSprite(new Sprite(res))
         })
     }, [miss, theme.markers]);

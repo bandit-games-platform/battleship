@@ -4,50 +4,39 @@ import java.util.List;
 import java.util.UUID;
 
 public class PlayerShotsShipsDto {
-    private UUID lobbyId;
-    private UUID playerId;
+    private IdentityDto identity;
     private List<PlayerShipDto> ourAliveShips;
     private List<PlayerShipDto> ourSunkShips;
     private List<ShotCoordinateDto> shotsOnOurShips;
 
     private int opponentAliveShips;
-    private List<PlayerShipDto> sunkOpponentsShip;
+    private List<PlayerShipDto> sunkOpponentsShips;
     private List<ShotCoordinateDto> shotsOnOpponentShips;
 
     public PlayerShotsShipsDto(
-            UUID lobbyId,
-            UUID playerId,
+            IdentityDto identity,
             List<PlayerShipDto> ourAliveShips,
             List<PlayerShipDto> ourSunkShips,
             List<ShotCoordinateDto> shotsOnOurShips,
             int opponentAliveShips,
-            List<PlayerShipDto> sunkOpponentsShip,
+            List<PlayerShipDto> sunkOpponentsShips,
             List<ShotCoordinateDto> shotsOnOpponentShips
     ) {
-        this.lobbyId = lobbyId;
-        this.playerId = playerId;
+        this.identity = identity;
         this.ourAliveShips = ourAliveShips;
         this.ourSunkShips = ourSunkShips;
         this.shotsOnOurShips = shotsOnOurShips;
         this.opponentAliveShips = opponentAliveShips;
-        this.sunkOpponentsShip = sunkOpponentsShip;
+        this.sunkOpponentsShips = sunkOpponentsShips;
         this.shotsOnOpponentShips = shotsOnOpponentShips;
     }
 
-    public UUID getLobbyId() {
-        return lobbyId;
+    public IdentityDto getIdentity() {
+        return identity;
     }
 
-    public void setLobbyId(UUID lobbyId) {
-        this.lobbyId = lobbyId;
-    }
-
-    public UUID getPlayerId() {
-        return playerId;
-    }
-
-    public void setPlayerId(UUID playerId) {
-        this.playerId = playerId;
+    public void setIdentity(IdentityDto identity) {
+        this.identity = identity;
     }
 
     public List<PlayerShipDto> getOurAliveShips() {
@@ -82,12 +71,12 @@ public class PlayerShotsShipsDto {
         this.opponentAliveShips = opponentAliveShips;
     }
 
-    public List<PlayerShipDto> getSunkOpponentsShip() {
-        return sunkOpponentsShip;
+    public List<PlayerShipDto> getSunkOpponentsShips() {
+        return sunkOpponentsShips;
     }
 
-    public void setSunkOpponentsShip(List<PlayerShipDto> sunkOpponentsShip) {
-        this.sunkOpponentsShip = sunkOpponentsShip;
+    public void setSunkOpponentsShips(List<PlayerShipDto> sunkOpponentsShips) {
+        this.sunkOpponentsShips = sunkOpponentsShips;
     }
 
     public List<ShotCoordinateDto> getShotsOnOpponentShips() {
@@ -104,7 +93,7 @@ public class PlayerShotsShipsDto {
             CoordinateDto placementCoordinate,
             boolean isVertical,
             boolean sunk,
-            List<CoordinateDto> shipCoordinate
+            List<CoordinateDto> shipCoordinates
     ) {}
 
     public record CoordinateDto (int row, int col) {}

@@ -5,5 +5,5 @@ export type Ship = {
     placementCoordinate: {col: number, row: number}
     isVertical: boolean
     sunk: boolean
-    shipCoordinate: {col: number, row: number}[]
+    shipCoordinates: {col: number, row: number}[]
 }

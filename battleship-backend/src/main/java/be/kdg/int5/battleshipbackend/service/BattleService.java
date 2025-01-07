@@ -39,7 +39,6 @@ public class BattleService {
         }
 
         ShotResult shot = opponent.getBoard().checkShot(shotCoordinate);
-        lobby.replacePlayer(opponent);
 
         if (shot.resultType() == ShotResultType.MISS) {
             lobby.addTurn();

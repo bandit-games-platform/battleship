@@ -9,13 +9,14 @@ public class Lobby {
     private PlayerId ownerId;
     private List<Player> players;
     private PlayerId firstToGo;
-    private int turnNumber = 1;
+    private int turnNumber;
     private LocalDateTime battleStartTime = null;
 
     public Lobby(LobbyId id, PlayerId ownerId, List<PlayerId> players) {
         this.id = id;
         this.ownerId = ownerId;
         this.players = players.stream().map(Player::new).collect(Collectors.toList());
+        this.turnNumber = 1;
     }
 
     public Player opponent(Player player) {
