@@ -51,7 +51,7 @@ export function EndDisplay({setScene}: EndDisplayProps) {
 
         if (app && app.stage) {
             const background = new PIXI.Graphics();
-            background.beginFill(0x1099bb);
+            background.beginFill(0x5F9EA0);
             background.drawRect(0, 0, app.view.width, app.view.height);
             background.endFill();
             app.stage.addChild(background);
@@ -65,7 +65,7 @@ export function EndDisplay({setScene}: EndDisplayProps) {
             button.eventMode = 'static';
             button.on('pointerdown', toggleReadiness);
 
-            const buttonText = new PIXI.Text(ready ? 'Nevermind' : 'Play Again?', { fontSize: 30, fill: '#ffffff' });
+            const buttonText = new PIXI.Text(ready ? 'Nevermind' : 'Play Again', { fontSize: 30, fill: '#ffffff' });
             buttonText.anchor.set(0.5);
             buttonText.x = button.width / 2;
             buttonText.y = button.height / 2;
@@ -74,36 +74,64 @@ export function EndDisplay({setScene}: EndDisplayProps) {
             app.stage.addChild(button);
 
             let resultText = new PIXI.Text();
-            if (stats && stats.winningPlayer === playerId) {
-                if (!soundPlayed) {
-                    playSound(theme.sounds.victory_sound);
-                    setSoundPlayed(true);
-                }
+            let resultSign = new PIXI.Text();
+            if (stats) {
+                if (stats.winningPlayer === playerId) {
+                    if (!soundPlayed) {
+                        playSound(theme.sounds.victory_sound);
+                        setSoundPlayed(true);
+                    }
 
-                resultText = new PIXI.Text('Congratulations Captain! The Victory is Ours!', { fontSize: 30, fill: '#ffffff' });
-            } else {
-                if (!soundPlayed) {
-                    playSound(theme.sounds.defeat_sound);
-                    setSoundPlayed(true);
-                }
+                    resultText = new PIXI.Text('Congratulations Captain! The Victory is Ours!', {
+                        fontSize: 30,
+                        fill: '#ffffff'
+                    });
 
-                resultText = new PIXI.Text("I'm sorry Captain, but unfortunately we were defeated!", { fontSize: 30, fill: '#ffffff' });
+                    resultSign = new PIXI.Text('VICTORY!', {
+                        fontSize: 100,
+                        fill: '#228B22',
+                        fontFamily: "Impact"
+                    });
+                } else {
+                    if (!soundPlayed) {
+                        playSound(theme.sounds.defeat_sound);
+                        setSoundPlayed(true);
+                    }
+
+                    resultText = new PIXI.Text("I'm sorry Captain, but unfortunately we were defeated!", {
+                        fontSize: 30,
+                        fill: '#ffffff'
+                    });
+
+                    resultSign = new PIXI.Text('DEFEAT!', {
+                        fontSize: 100,
+                        fill: '#C41E3A',
+                        fontFamily: "Impact"
+                    });
+                }
             }
 
             resultText.anchor.set(0.5);
             resultText.x = app.view.width / 2;
             resultText.y = app.view.height / 2;
 
+            resultSign.anchor.set(0.5);
+            resultSign.x = app.view.width / 2;
+            resultSign.y = app.view.height / 3;
+
             app.stage.addChild(resultText);
+            app.stage.addChild(resultSign);
 
             return () => {
                 app.stage.removeChild(background);
                 app.stage.removeChild(button);
                 app.stage.removeChild(resultText);
+                app.stage.removeChild(resultSign);
 
                 background.destroy(true);
                 button.destroy(true);
                 resultText.destroy(true);
+                resultSign.destroy(true);
             };
         }
     }, [app, canvasSize, error, lobbyId, playerId, ready, readyToggle, setScene, stats, theme.sounds.defeat_sound, theme.sounds.victory_sound]);
