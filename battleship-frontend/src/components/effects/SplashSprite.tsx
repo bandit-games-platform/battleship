@@ -4,14 +4,14 @@ import {AppContext} from "../../context/AppContext.ts";
 import {ThemeContext} from "../../context/ThemeContext.ts";
 import {displayVisualEffect} from "../../utils/displayVisualEffect.ts";
 
-interface ExplosionSpriteProps {
+interface SplashSpriteProps {
     x: number,
     y: number,
     show: boolean,
     toggleShow: () => void
 }
 
-export function ExplosionSprite({x,y, show, toggleShow}: ExplosionSpriteProps) {
+export function SplashSprite({x,y, show, toggleShow}: SplashSpriteProps) {
     const {app, canvasSize} = useContext(AppContext);
     const {theme} = useContext(ThemeContext);
 
@@ -19,9 +19,9 @@ export function ExplosionSprite({x,y, show, toggleShow}: ExplosionSpriteProps) {
         if (app && app.stage) {
             if (!show) return;
 
-            displayVisualEffect(theme.effects.explosion_anim, app, x, y).then(toggleShow);
+            displayVisualEffect(theme.effects.splash_anim, app, x, y).then(toggleShow);
         }
-    }, [app, canvasSize, show, theme.effects.explosion_anim, toggleShow, x, y]);
+    }, [app, canvasSize, show, theme.effects.splash_anim, toggleShow, x, y]);
 
     return null;
 }

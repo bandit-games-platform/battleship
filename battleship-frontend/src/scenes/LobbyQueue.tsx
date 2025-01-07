@@ -2,12 +2,11 @@ import {useContext, useEffect, useState} from "react";
 import {AppContext} from "../context/AppContext.ts";
 import * as PIXI from "pixi.js";
 import {useGetLobbyState} from "../hooks/useGetLobbyState.ts";
-import {LoadingIcon} from "../components/globalComponents/LoadingIcon.tsx";
-import {Point} from "pixi.js";
 import {Player} from "../model/Player.ts";
 import {Lobby} from "../model/Lobby.ts";
 import {useReadyToggle} from "../hooks/useReadyToggle.ts";
 import {IdentityContext} from "../context/IdentityContext.ts";
+import {GeneralStatusCheck} from "../utils/generalStatusCheck.ts";
 
 interface LobbyQueueProps {
     setScene: (scene: string) => void
@@ -53,32 +52,8 @@ export function LobbyQueue({setScene}: LobbyQueueProps) {
             background.endFill();
             app.stage.addChild(background);
 
-            if (lobbyLoading || !currentLobby) {
-                const onTick = [
-                    LoadingIcon(app, new Point((app.view.width / 2) - 50, (app.view.height / 2) - 50)),
-                ];
-
-                const tickerCallback = (delta: number) => {
-                    onTick.forEach((cb) => cb(delta));
-                };
-                app.ticker.add(tickerCallback);
-
-                return () => {
-                    app.ticker.remove(tickerCallback);
-                };
-            }
-
-            if (lobbyError) {
-                const errorText = new PIXI.Text('Could not load lobby! Try again later.', {fill: '#ff0000'})
-                errorText.anchor.set(0.5);
-                errorText.x = app.view.width / 2;
-                errorText.y = app.view.height / 2;
-                app.stage.addChild(errorText);
-
-                return () => {
-                    app.stage.removeChild(errorText);
-                    errorText.destroy(true);
-                };
+            if (lobbyLoading || !currentLobby || lobbyError) {
+                return GeneralStatusCheck({object: currentLobby!, objectLoading: lobbyLoading, objectError: lobbyError, objectString: "lobby", app})
             }
 
             const player: Player | undefined = currentLobby.players.find(p => p.playerId === playerId)

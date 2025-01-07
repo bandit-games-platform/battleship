@@ -7,6 +7,7 @@ import {useSearchParams} from "react-router-dom";
 import {ThemeProvider} from "../context/ThemeProvider.tsx";
 import {ArrangeShips} from "../scenes/ArrangeShips.tsx";
 import {useJoinLobby} from "../hooks/useJoinLobby.ts";
+import {Battle} from "../scenes/Battle.tsx";
 
 export function BattleshipGame() {
     const [scene, setScene] = useState<string>("main_menu");
@@ -63,7 +64,7 @@ export function BattleshipGame() {
                         {scene === "main_menu" && <MainMenu setScene={setScene} setLobbyId={setLobbyId} />}
                         {scene === "lobby_queue" && <LobbyQueue setScene={setScene} />}
                         {scene === "arrange_ships" && <ArrangeShips setScene={setScene} />}
-                        {scene === "battle_scene" && <></>}
+                        {scene === "battle_scene" && <Battle setScene={setScene}/>}
                     </>
                 </CanvasManager>
             </ThemeProvider>
