@@ -30,7 +30,10 @@ export interface BattleshipTheme {
 
     ships: { [key in ShipType]: string},
 
+    markers: {miss: string, hit: string},
+
     effects: {
-        explosion_anim: AnimSpriteSheet
+        explosion_anim: AnimSpriteSheet,
+        splash_anim: AnimSpriteSheet,
     },
 }

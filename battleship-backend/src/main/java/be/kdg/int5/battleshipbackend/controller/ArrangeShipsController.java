@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.stream.Collectors;
+
 @RestController
 @RequestMapping("/arrange_ships")
 public class ArrangeShipsController {
@@ -34,7 +36,7 @@ public class ArrangeShipsController {
                                 shipRecord.placement(),
                                 shipRecord.isVertical())
                         )
-                        .toList()
+                        .collect(Collectors.toList())
         );
 
         if (!arrangementAccepted) return new ResponseEntity<>(HttpStatus.CONFLICT);

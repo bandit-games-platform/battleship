@@ -55,4 +55,17 @@ public class Board {
     public boolean hasLostBattle() {
         return aliveShips.isEmpty();
     }
+
+
+    public List<Ship> getAliveShips() {
+        return aliveShips;
+    }
+
+    public List<Ship> getSunkShips() {
+        return sunkShips;
+    }
+
+    public Set<Coordinate> getShots() {
+        return shots;
+    }
 }

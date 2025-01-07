@@ -5,7 +5,7 @@ export function useGetLobbyState(lobbyId: string | undefined, enabled: boolean =
     const {isLoading, isError, data: lobby} = useQuery({
         queryKey: ['lobby', lobbyId],
         queryFn: () => getLobbyState(lobbyId),
-        refetchInterval: 5000,
+        refetchInterval: 1000,
         enabled: enabled
     })
 

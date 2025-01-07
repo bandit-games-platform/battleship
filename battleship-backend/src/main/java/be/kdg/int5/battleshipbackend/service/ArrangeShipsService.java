@@ -25,7 +25,7 @@ public class ArrangeShipsService {
             return false;
         }
 
-        Player player = lobby.getPlayerById(playerId);
+        Player player = lobby.getPlayer(playerId);
         if (player == null) {
             logger.warn("shipArrangement: Submission for non-existent player: {}", playerId);
             return false;
