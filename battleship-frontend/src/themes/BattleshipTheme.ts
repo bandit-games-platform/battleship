@@ -36,4 +36,14 @@ export interface BattleshipTheme {
         explosion_anim: AnimSpriteSheet,
         splash_anim: AnimSpriteSheet,
     },
+
+    sounds: {
+        hit: string,
+        miss: string,
+        battle_music: string,
+        victory_sound: string,
+        defeat_sound: string,
+    },
+
+    music_icons: {unmuted: string, muted: string}
 }

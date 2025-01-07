@@ -13,6 +13,8 @@ import {ClickableBattleArea} from "../components/ClickableBattleArea.tsx";
 import {ExplosionSprite} from "../components/effects/ExplosionSprite.tsx";
 import {SplashSprite} from "../components/effects/SplashSprite.tsx";
 import {NewShotDisplay} from "../components/NewShotDisplay.tsx";
+import {ThemeContext} from "../context/ThemeContext.ts";
+import {Sprite} from "pixi.js";
 
 interface BattleProps {
     setScene: (scene: string) => void
@@ -23,12 +25,24 @@ interface BattleRendererProps {
     lobbyLoading: boolean
     lobbyError: boolean
     boardMargin: number
-    boardSize: number
+    boardSize: number,
+    toggleBackgroundMusic: () => void
 }
 
-function BattleRenderer({lobby, lobbyLoading, lobbyError, boardMargin, boardSize}: BattleRendererProps) {
+function BattleRenderer({lobby, lobbyLoading, lobbyError, boardMargin, boardSize, toggleBackgroundMusic}: BattleRendererProps) {
     const {app, canvasSize} = useContext(AppContext);
     const {playerId} = useContext(IdentityContext);
+    const {theme} = useContext(ThemeContext);
+    const [musicIcon, setMusicIcon] = useState(theme.music_icons.unmuted);
+
+    const toggleMusic = () => {
+        if (musicIcon === theme.music_icons.unmuted) {
+            setMusicIcon(theme.music_icons.muted)
+        } else {
+            setMusicIcon(theme.music_icons.unmuted)
+        }
+        toggleBackgroundMusic()
+    }
 
     useEffect(() => {
         if (app && app.stage) {
@@ -67,19 +81,43 @@ function BattleRenderer({lobby, lobbyLoading, lobbyError, boardMargin, boardSize
             turnText.y = (boardSize + (canvasSize.height - boardSize)) - turnText.height;
             app.stage.addChild(turnText);
 
+            const musicIconDisplay = Sprite.from(musicIcon);
+            musicIconDisplay.anchor.set(0.5)
+            musicIconDisplay.height = (canvasSize.width / 25)
+            musicIconDisplay.width = (canvasSize.width / 25)
+            musicIconDisplay.x = canvasSize.width - (musicIconDisplay.width / 2) - 5
+            musicIconDisplay.y = musicIconDisplay.height / 2
+            musicIconDisplay.eventMode = 'static';
+            musicIconDisplay.cursor = 'pointer';
+
+            if (musicIcon === theme.music_icons.muted) {
+                musicIconDisplay.height -= 10
+                musicIconDisplay.tint = 0xEE4B2B
+            }
+
+            musicIconDisplay
+                .on("pointerdown", toggleMusic)
+                .on("pointerover", () => console.log("Hovering now"))
+                .on("pointerout", () => console.log("No longer hovering"));
+            app.stage.addChild(musicIconDisplay);
+
             return () => {
                 app.stage.removeChild(background);
                 app.stage.removeChild(yourBoardText);
                 app.stage.removeChild(opponentBoardText);
                 app.stage.removeChild(turnText);
+                app.stage.removeChild(musicIconDisplay);
 
                 background.destroy(true);
                 yourBoardText.destroy(true);
                 opponentBoardText.destroy(true);
                 turnText.destroy(true);
+                musicIconDisplay.destroy(true);
+
+                musicIconDisplay.off("pointerdown", toggleMusic)
             }
         }
-    }, [app, canvasSize, lobby, lobbyError, lobbyLoading]);
+    }, [app, boardMargin, boardSize, canvasSize, lobby, lobbyError, lobbyLoading, musicIcon, playerId, theme.music_icons.muted, toggleMusic]);
 
     return null;
 
@@ -87,7 +125,9 @@ function BattleRenderer({lobby, lobbyLoading, lobbyError, boardMargin, boardSize
 
 export function Battle({setScene}: BattleProps) {
     const {canvasSize} = useContext(AppContext);
+    const {theme} = useContext(ThemeContext);
     const {lobbyId, playerId} = useContext(IdentityContext);
+
     const {lobby, isLoading: lobbyLoading, isError: lobbyError} = useGetLobbyState(lobbyId);
     const [explosionPosition, setExplosionPosition] = useState({col: -1, row: -1})
     const [showExplosion, setShowExplosion] = useState(false);
@@ -96,6 +136,23 @@ export function Battle({setScene}: BattleProps) {
     const [previousHitsOnFleet, setPreviousHitsOnFleet] = useState<{col: number, row: number, miss: boolean}[]>()
     const [newHits, setNewHits] = useState<{col: number, row: number, miss: boolean}[]>()
     const {battleStatus} = useGetBattleStatus(playerId, lobbyId?lobbyId:"")
+
+    const backgroundMusicAudio = new Audio(theme.sounds.battle_music);
+    backgroundMusicAudio.loop = true;
+    backgroundMusicAudio.volume = 0.1;
+
+    const [backgroundMusic] = useState(backgroundMusicAudio);
+    const [backgroundMusicPlaying, setBackgroundMusicPlaying] = useState(true);
+
+    const toggleBackgroundMusic = () => setBackgroundMusicPlaying(!backgroundMusicPlaying);
+
+    useEffect(() => {
+        if (backgroundMusicPlaying) {
+            backgroundMusic.play()
+        } else {
+            backgroundMusic.pause()
+        }
+    }, [backgroundMusic, backgroundMusicPlaying]);
 
     const toggleExplosion = () => {
         setShowExplosion(!showExplosion)
@@ -177,6 +234,7 @@ export function Battle({setScene}: BattleProps) {
                 lobbyLoading={lobbyLoading}
                 boardMargin={boardMargin}
                 boardSize={boardSize}
+                toggleBackgroundMusic={toggleBackgroundMusic}
             />
 
             {!lobbyLoading && !lobbyError && (

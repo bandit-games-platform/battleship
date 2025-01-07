@@ -8,6 +8,7 @@ import {useShootShot} from "../hooks/useShootShot.ts";
 import {ShotDto} from "../model/ShotDto.ts";
 import {IdentityDto} from "../model/IdentityDto.ts";
 import {useQueryClient} from "@tanstack/react-query";
+import {ThemeContext} from "../context/ThemeContext.ts";
 
 interface ClickableBattleAreaProps {
     pos: {
@@ -23,6 +24,7 @@ interface ClickableBattleAreaProps {
 
 export function ClickableBattleArea({pos, size, squareSize, lobby, hitDisplay, missDisplay}: ClickableBattleAreaProps) {
     const {app, canvasSize} = useContext(AppContext);
+    const {theme} = useContext(ThemeContext);
     const {playerId} = useContext(IdentityContext);
     const queryClient = useQueryClient()
     const {shootShot, isPending: shotPending} = useShootShot();
@@ -40,8 +42,14 @@ export function ClickableBattleArea({pos, size, squareSize, lobby, hitDisplay, m
             if (result) {
                 if (result.status === 200 && (result.shotResult.shotResult === "HIT" || result.shotResult.shotResult === "SUNK")) {
                     hitDisplay(col, row);
+                    const hitAudio = new Audio(theme.sounds.hit);
+                    await hitAudio.play()
+                    hitAudio.remove()
                 } else if (result.status === 200 && (result.shotResult.shotResult === "MISS")) {
                     missDisplay(col, row);
+                    const missAudio = new Audio(theme.sounds.miss);
+                    await missAudio.play()
+                    missAudio.remove()
                 }
             }
         }
@@ -145,7 +153,7 @@ export function ClickableBattleArea({pos, size, squareSize, lobby, hitDisplay, m
                 clickableArea.destroy(true);
             }
         }
-    }, [app, pos, size, squareSize, canvasSize, lobby.turnOf, playerId, lobby.lobbyId, shootShot, queryClient, hitDisplay, missDisplay, shotPending]);
+    }, [app, pos, size, squareSize, canvasSize, lobby.turnOf, playerId, lobby.lobbyId, shootShot, queryClient, hitDisplay, missDisplay, shotPending, theme.sounds.hit, theme.sounds.miss]);
 
     return null;
 }
