@@ -91,7 +91,6 @@ function BattleRenderer({lobby, lobbyLoading, lobbyError, boardMargin, boardSize
             musicIconDisplay.cursor = 'pointer';
 
             if (musicIcon === theme.music_icons.muted) {
-                musicIconDisplay.height -= 10
                 musicIconDisplay.tint = 0xEE4B2B
             }
 
@@ -135,20 +134,25 @@ export function Battle({setScene}: BattleProps) {
     const [newHits, setNewHits] = useState<{col: number, row: number, miss: boolean}[]>()
     const {battleStatus} = useGetBattleStatus(playerId, lobbyId?lobbyId:"")
 
-    const backgroundMusicAudio = new Audio(theme.sounds.battle_music);
-    backgroundMusicAudio.loop = true;
-    backgroundMusicAudio.volume = 0.1;
-
-    const [backgroundMusic] = useState(backgroundMusicAudio);
+    const [backgroundMusic, setBackgroundMusic] = useState<HTMLAudioElement>();
     const [backgroundMusicPlaying, setBackgroundMusicPlaying] = useState(true);
+
+    useEffect(() => {
+        const backgroundMusicAudio = new Audio(theme.sounds.battle_music);
+        backgroundMusicAudio.loop = true;
+        backgroundMusicAudio.volume = 0.1;
+        setBackgroundMusic(backgroundMusicAudio);
+    }, [theme.sounds])
 
     const toggleBackgroundMusic = () => setBackgroundMusicPlaying(!backgroundMusicPlaying);
 
     useEffect(() => {
-        if (backgroundMusicPlaying) {
-            backgroundMusic.play()
-        } else {
-            backgroundMusic.pause()
+        if (backgroundMusic) {
+            if (backgroundMusicPlaying) {
+                backgroundMusic.play()
+            } else {
+                backgroundMusic.pause()
+            }
         }
     }, [backgroundMusic, backgroundMusicPlaying]);
 
