@@ -1,3 +1,3 @@
 export type ShotResult = {
-    shotResult: string
+    shotResult: "HIT" | "MISS" | "SUNK"
 }

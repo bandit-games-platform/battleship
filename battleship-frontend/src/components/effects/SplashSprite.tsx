@@ -2,7 +2,7 @@
 import {useContext, useEffect} from "react";
 import {AppContext} from "../../context/AppContext.ts";
 import {ThemeContext} from "../../context/ThemeContext.ts";
-import {textureAnimator} from "../../utils/textureAnimator.ts";
+import {displayVisualEffect} from "../../utils/displayVisualEffect.ts";
 
 interface SplashSpriteProps {
     x: number,
@@ -19,7 +19,7 @@ export function SplashSprite({x,y, show, toggleShow}: SplashSpriteProps) {
         if (app && app.stage) {
             if (!show) return;
 
-            textureAnimator(theme.effects.splash_anim, app, x, y).then(toggleShow);
+            displayVisualEffect(theme.effects.splash_anim, app, x, y).then(toggleShow);
         }
     }, [app, canvasSize, show, theme.effects.splash_anim, toggleShow, x, y]);
 

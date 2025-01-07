@@ -285,7 +285,7 @@ export function Battle({setScene}: BattleProps) {
                                 )
                             })}
 
-                            {battleStatus.sunkOpponentsShip.map((ship) => {
+                            {battleStatus.sunkOpponentsShips.map((ship) => {
                                 const shipYPos = ship.placementCoordinate.row * shipSize + boardY;
                                 const shipXPos = canvasSize.width - (boardSize + boardMargin) + ship.placementCoordinate.col * shipSize;
                                 return (
@@ -329,14 +329,14 @@ export function Battle({setScene}: BattleProps) {
                             size={boardSize}
                             squareSize={shipSize}
                             lobby={lobby}
-                            hitDisplay={(col: number, row: number) => {
+                            showHitMarker={(col: number, row: number) => {
                                 const explosionX = opponentBoardX + (col * shipSize) + shipSize / 2
                                 const explosionY = boardY + (row * shipSize) + shipSize / 2
                                 setExplosionPosition({col: explosionX, row: explosionY});
                                 setShowExplosion(true);
                                 battleStatus.shotsOnOpponentShips.push({col, row, miss: false});
                             }}
-                            missDisplay={(col: number, row: number) => {
+                            showMissMarker={(col: number, row: number) => {
                                 const splashX = opponentBoardX + (col * shipSize) + shipSize / 2
                                 const splashY = boardY + (row * shipSize) + shipSize / 2
                                 setSplashPosition({col: splashX, row: splashY});

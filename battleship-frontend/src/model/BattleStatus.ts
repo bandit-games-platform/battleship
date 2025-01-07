@@ -1,13 +1,13 @@
 import {Ship} from "./Ship.ts";
+import {IdentityDto} from "./IdentityDto.ts";
 
 export type BattleStatus = {
-    lobbyId: string
-    playerId: string
+    identity: IdentityDto
     ourAliveShips: Ship[]
     ourSunkShips: Ship[]
     shotsOnOurShips: {col: number, row: number, miss: boolean}[]
 
     opponentAliveShips: number
-    sunkOpponentsShip: Ship[]
+    sunkOpponentsShips: Ship[]
     shotsOnOpponentShips: {col: number, row: number, miss: boolean}[]
 }

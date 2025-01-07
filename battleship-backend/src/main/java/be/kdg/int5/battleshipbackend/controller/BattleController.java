@@ -61,8 +61,7 @@ public class BattleController {
         ).collect(Collectors.toList());
 
         PlayerShotsShipsDto playerShotsShipsDto = new PlayerShotsShipsDto(
-                lobby.getId().uuid(),
-                player.getId().uuid(),
+                new IdentityDto(lobby.getId().uuid(), player.getId().uuid()),
                 ourAliveShips,
                 ourSunkShips,
                 shotsOnOurShips,
@@ -86,7 +85,7 @@ public class BattleController {
 
             return ResponseEntity.ok(new ShotResultDto(shotResult.resultType().name()));
         } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(HttpStatus.ALREADY_REPORTED);
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
     }
 
