@@ -1,16 +1,14 @@
 package be.kdg.int5.battleshipbackend.controller;
 
 import be.kdg.int5.battleshipbackend.controller.dto.MatchStatisticsDto;
-import be.kdg.int5.battleshipbackend.domain.Lobby;
-import be.kdg.int5.battleshipbackend.domain.LobbyId;
+import be.kdg.int5.battleshipbackend.controller.dto.PlayerIdDto;
+import be.kdg.int5.battleshipbackend.domain.*;
 import be.kdg.int5.battleshipbackend.service.LobbyService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
@@ -28,6 +26,22 @@ public class GameEndController {
         UUID lobbyUUID = UUID.fromString(lobbyId);
         Lobby lobby = lobbyService.getLobbyInformation(new LobbyId(lobbyUUID));
 
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
+        if (lobby.getGameStage() != GameStage.FINISHED) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        for (Player player: lobby.getPlayers()) {
+            if (!player.hasLostBattle()) return ResponseEntity.ok(new MatchStatisticsDto(player.getId().uuid()));
+        }
+
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
+    @PostMapping("/{lobbyId}/restart")
+    public ResponseEntity<Void> voteToRestartLobby(@PathVariable String lobbyId, @Valid @RequestBody PlayerIdDto dto) {
+        UUID lobbyUUID = UUID.fromString(lobbyId);
+        lobbyService.voteToRestart(new LobbyId(lobbyUUID), new PlayerId(dto.getPlayerId()));
+
+        return ResponseEntity.ok().build();
     }
 }

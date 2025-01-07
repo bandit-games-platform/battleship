@@ -107,6 +107,26 @@ public class LobbyService {
         return repository.getLobbyById(lobbyId);
     }
 
+    public void voteToRestart(LobbyId lobbyId, PlayerId playerId) {
+        Lobby loadedLobby = repository.getLobbyById(lobbyId);
+        if (loadedLobby == null || loadedLobby.getGameStage() != GameStage.FINISHED) return;
+
+        Player player = loadedLobby.getPlayer(playerId);
+        player.setVoteToRestart(!player.votedToRestart());
+
+        logger.info("Player {} {}.", player.getId().uuid(), player.votedToRestart()? "now wants to restart the lobby." : "now doesn't want to play again.");
+
+        for (Player lobbyPlayer: loadedLobby.getPlayers()) {
+            if (!lobbyPlayer.votedToRestart()) {
+                repository.updateLobby(loadedLobby);
+                return;
+            }
+        }
+
+        loadedLobby.resetLobby();
+        repository.updateLobby(loadedLobby);
+    }
+
     public boolean leaveLobby(PlayerId playerId, LobbyId lobbyId) {
         Lobby loadedLobby = repository.getLobbyById(lobbyId);
         if (loadedLobby == null) return false;

@@ -138,6 +138,12 @@ public class Lobby {
             return;
         }
 
+        for (Player player : players) {
+            if (!player.votedToRestart()) {
+                return;
+            }
+        }
+
         firstToGo = null;
         turnNumber = 1;
         battleStartTime = null;
@@ -145,6 +151,7 @@ public class Lobby {
         players.forEach(player -> {
             player.setBoard(null);
             player.setReady(false);
+            player.setVoteToRestart(false);
         });
     }
 }
