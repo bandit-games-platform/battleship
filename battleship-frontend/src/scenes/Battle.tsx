@@ -35,16 +35,16 @@ function BattleRenderer({lobby, lobbyLoading, lobbyError, boardMargin, boardSize
     const {theme} = useContext(ThemeContext);
     const [musicIcon, setMusicIcon] = useState(theme.music_icons.unmuted);
 
-    const toggleMusic = () => {
-        if (musicIcon === theme.music_icons.unmuted) {
-            setMusicIcon(theme.music_icons.muted)
-        } else {
-            setMusicIcon(theme.music_icons.unmuted)
-        }
-        toggleBackgroundMusic()
-    }
-
     useEffect(() => {
+        const toggleMusic = () => {
+            if (musicIcon === theme.music_icons.unmuted) {
+                setMusicIcon(theme.music_icons.muted)
+            } else {
+                setMusicIcon(theme.music_icons.unmuted)
+            }
+            toggleBackgroundMusic()
+        }
+
         if (app && app.stage) {
             app.stage.sortableChildren = true;
 
@@ -115,7 +115,7 @@ function BattleRenderer({lobby, lobbyLoading, lobbyError, boardMargin, boardSize
                 musicIconDisplay.off("pointerdown", toggleMusic)
             }
         }
-    }, [app, boardMargin, boardSize, canvasSize, lobby, lobbyError, lobbyLoading, musicIcon, playerId, theme.music_icons.muted, toggleMusic]);
+    }, [app, boardMargin, boardSize, canvasSize, lobby, lobbyError, lobbyLoading, musicIcon, playerId, theme.music_icons.muted, theme.music_icons.unmuted, toggleBackgroundMusic]);
 
     return null;
 

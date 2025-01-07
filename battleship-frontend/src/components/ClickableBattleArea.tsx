@@ -41,14 +41,14 @@ export function ClickableBattleArea({pos, size, squareSize, lobby, hitDisplay, m
 
             if (result) {
                 if (result.status === 200 && (result.shotResult.shotResult === "HIT" || result.shotResult.shotResult === "SUNK")) {
-                    hitDisplay(col, row);
                     const hitAudio = new Audio(theme.sounds.hit);
                     await hitAudio.play()
+                    hitDisplay(col, row);
                     hitAudio.remove()
                 } else if (result.status === 200 && (result.shotResult.shotResult === "MISS")) {
-                    missDisplay(col, row);
                     const missAudio = new Audio(theme.sounds.miss);
                     await missAudio.play()
+                    missDisplay(col, row);
                     missAudio.remove()
                 }
             }
@@ -80,6 +80,7 @@ export function ClickableBattleArea({pos, size, squareSize, lobby, hitDisplay, m
                 const col = Math.floor(boardRelPos.x / squareSize);
                 const row = Math.floor(boardRelPos.y / squareSize);
 
+                app.stage.removeChild(confirmationBox);
                 confirmationBox = new PIXI.Graphics();
                 confirmationBox.zIndex = 25
                 confirmationBox.beginFill(0x000000, 1);
