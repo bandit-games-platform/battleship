@@ -50,19 +50,19 @@ export function MainMenu({ setScene, setLobbyId }: MainMenuProps) {
         
         if (app && app.stage) {
             // Create a start game button on the canvas
-            const button = new PIXI.Graphics();
-            button.beginFill(failedToCreateLobby?0x440000:0x000000);
-            button.drawRect(0, 0, 200, 50);
-            button.endFill();
-            button.x = 100 + (creatingLobby?10:0);
-            button.y = app.view.height / 2 - 25;
-            button.eventMode = 'static';
-            button.on('pointerdown', handleStartGame);
-            const buttonText = new PIXI.Text(creatingLobby?'Starting...':'Start Game', { fontSize: 24, fill: '#ffffff' });
-            buttonText.anchor.set(0.5);
-            buttonText.x = button.width / 2;
-            buttonText.y = button.height / 2;
-            button.addChild(buttonText);
+            const buttonStart = new PIXI.Graphics();
+            buttonStart.beginFill(failedToCreateLobby?0x440000:0x000000);
+            buttonStart.drawRect(0, 0, 200, 50);
+            buttonStart.endFill();
+            buttonStart.x = 100 + (creatingLobby?10:0);
+            buttonStart.y = app.view.height / 2 - 25;
+            buttonStart.eventMode = 'static';
+            buttonStart.on('pointerdown', handleStartGame);
+            const buttonStartText = new PIXI.Text(creatingLobby?'Starting...':'Start Game', { fontSize: 24, fill: '#ffffff' });
+            buttonStartText.anchor.set(0.5);
+            buttonStartText.x = buttonStart.width / 2;
+            buttonStartText.y = buttonStart.height / 2;
+            buttonStart.addChild(buttonStartText);
 
             // Create a start game button on the canvas
             const buttonSettings = new PIXI.Graphics();
@@ -79,12 +79,12 @@ export function MainMenu({ setScene, setLobbyId }: MainMenuProps) {
             buttonSettingsText.y = buttonSettings.height / 2;
             buttonSettings.addChild(buttonSettingsText);
 
-            app.stage.addChild(button, buttonSettings);
+            app.stage.addChild(buttonStart, buttonSettings);
 
             // Clean up on unmount
             return () => {
-                app.stage.removeChild(button, buttonSettings);
-                button.destroy(true);
+                app.stage.removeChild(buttonStart, buttonSettings);
+                buttonStart.destroy(true);
                 buttonSettings.destroy(true);
             };
         }
