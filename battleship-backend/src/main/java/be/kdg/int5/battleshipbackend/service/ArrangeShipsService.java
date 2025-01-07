@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -53,6 +54,11 @@ public class ArrangeShipsService {
             Board board = new Board(arrangedShips);
 
             player.setBoard(board);
+
+            if (lobby.getGameStage() == GameStage.BATTLE) {
+                lobby.setBattleStartTime(LocalDateTime.now());
+            }
+
             repository.save(lobby);
             logger.info("shipArrangement: Ship Arrangement saved for player {} in lobby {}", playerId, lobbyId);
             return true;
