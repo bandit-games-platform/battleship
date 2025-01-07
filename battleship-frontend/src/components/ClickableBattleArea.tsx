@@ -8,6 +8,7 @@ import {useShootShot} from "../hooks/useShootShot.ts";
 import {ShotDto} from "../model/ShotDto.ts";
 import {IdentityDto} from "../model/IdentityDto.ts";
 import {useQueryClient} from "@tanstack/react-query";
+import {ThemeContext} from "../context/ThemeContext.ts";
 
 interface ClickableBattleAreaProps {
     pos: {
@@ -23,6 +24,7 @@ interface ClickableBattleAreaProps {
 
 export function ClickableBattleArea({pos, size, squareSize, lobby, showHitMarker, showMissMarker}: ClickableBattleAreaProps) {
     const {app, canvasSize} = useContext(AppContext);
+    const {theme} = useContext(ThemeContext);
     const {playerId} = useContext(IdentityContext);
     const queryClient = useQueryClient()
     const {shootShot, isPending: shotPending} = useShootShot();
@@ -39,9 +41,15 @@ export function ClickableBattleArea({pos, size, squareSize, lobby, showHitMarker
 
             if (result) {
                 if (result.status === 200 && (result.shotResult.shotResult === "HIT" || result.shotResult.shotResult === "SUNK")) {
+                    const hitAudio = new Audio(theme.sounds.hit);
+                    await hitAudio.play()
                     showHitMarker(col, row);
+                    hitAudio.remove()
                 } else if (result.status === 200 && (result.shotResult.shotResult === "MISS")) {
+                    const missAudio = new Audio(theme.sounds.miss);
+                    await missAudio.play()
                     showMissMarker(col, row);
+                    missAudio.remove()
                 }
             }
         }
@@ -72,6 +80,7 @@ export function ClickableBattleArea({pos, size, squareSize, lobby, showHitMarker
                 const col = Math.floor(boardRelPos.x / squareSize);
                 const row = Math.floor(boardRelPos.y / squareSize);
 
+                app.stage.removeChild(confirmationBox);
                 confirmationBox = new PIXI.Graphics();
                 confirmationBox.zIndex = 25
                 confirmationBox.beginFill(0x000000, 1);
@@ -145,7 +154,7 @@ export function ClickableBattleArea({pos, size, squareSize, lobby, showHitMarker
                 clickableArea.destroy(true);
             }
         }
-    }, [app, pos, size, squareSize, canvasSize, lobby.turnOf, playerId, lobby.lobbyId, shootShot, queryClient, showHitMarker, showMissMarker, shotPending]);
+    }, [app, pos, size, squareSize, canvasSize, lobby.turnOf, playerId, lobby.lobbyId, shootShot, queryClient, showHitMarker, showMissMarker, shotPending, theme.sounds.hit, theme.sounds.miss]);
 
     return null;
 }
