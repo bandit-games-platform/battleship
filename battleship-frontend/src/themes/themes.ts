@@ -38,6 +38,17 @@ export const themes: BattleshipTheme[] = [
                 rows: 1,
                 speed: 0.25
             }
+        },
+        sounds : {
+            hit: assets + "sounds/hit_explosion.mp3",
+            miss: assets + "sounds/miss_splash.mp3",
+            battle_music: assets + "sounds/battle_music.mp3",
+            victory_sound: assets + "sounds/victory_sound.mp3",
+            defeat_sound: assets + "sounds/defeat_sound.mp3"
+        },
+        music_icons: {
+            unmuted: assets + "unmuted_icon.png",
+            muted: assets + "muted_icon.png"
         }
     },
 ]
