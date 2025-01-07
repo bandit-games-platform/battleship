@@ -64,7 +64,7 @@ export function MainMenu({ setScene, setLobbyId }: MainMenuProps) {
             buttonStartText.y = buttonStart.height / 2;
             buttonStart.addChild(buttonStartText);
 
-            // Create a start game button on the canvas
+            // Create a settings button on the canvas
             const buttonSettings = new PIXI.Graphics();
             buttonSettings.beginFill(settingsOpen?0x333333:0x000000);
             buttonSettings.drawRect(0, 0, 200, 50);
