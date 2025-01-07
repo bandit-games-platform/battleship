@@ -91,7 +91,6 @@ function BattleRenderer({lobby, lobbyLoading, lobbyError, boardMargin, boardSize
             musicIconDisplay.cursor = 'pointer';
 
             if (musicIcon === theme.music_icons.muted) {
-                musicIconDisplay.height -= 10
                 musicIconDisplay.tint = 0xEE4B2B
             }
 
