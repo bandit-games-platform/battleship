@@ -47,10 +47,12 @@ build_frontend:
     - echo "Building and tagging game frontend project"
     - cd ./battleship-frontend
     - docker build
-      --build-arg VITE_BS_BACKEND_URL=$GAME_BACKEND_URL
+      --build-arg VITE_BS_BACKEND_URL="$GAME_BACKEND_URL"
       -t $GAME_REGISTRY_USERNAME.azurecr.io/frontend:latest
       .
     - echo "Publishing frontend image to Azure"
+    - echo "value:"
+    - echo  $GAME_BACKEND_URL
     - docker push $GAME_REGISTRY_USERNAME.azurecr.io/frontend:latest
     - cd ..
   services:
