@@ -47,8 +47,12 @@ tasks.named("generateGitProperties") {
 tasks.register("printGitProperties") {
 	dependsOn("generateGitProperties")
 	doLast {
-		val gitProps = project.extra["gitProps"] as Map<String, String>
-		println("git.commit.id.abbrev=${gitProps["git.commit.id.abbrev"]}")
+		val gitProps = project.extra["gitProps"]
+		if (gitProps is Map<*, *>) {
+			println("git.commit.id.abbrev=${gitProps["git.commit.id.abbrev"]}")
+		} else {
+			println("nothing found")
+		}
 	}
 }
 
