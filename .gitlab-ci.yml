@@ -48,10 +48,10 @@ build_frontend:
     - cd ./battleship-frontend
     - docker build
       --build-arg VITE_BS_BACKEND_URL=$GAME_BACKEND_URL
-      -t $GAME_REGISTRY_USERNAME.azurecr.io/bandit-frontend-dev:latest
+      -t $GAME_REGISTRY_USERNAME.azurecr.io/frontend:latest
       .
-    - echo "Publishing frontend dev image to Azure"
-    - docker push $GAME_REGISTRY_USERNAME.azurecr.io/bandit-frontend-dev:latest
+    - echo "Publishing frontend image to Azure"
+    - docker push $GAME_REGISTRY_USERNAME.azurecr.io/frontend:latest
     - cd ..
   services:
     - docker:27.3.1-dind
@@ -63,5 +63,127 @@ build_frontend:
     - if: $CI_COMMIT_BRANCH == 'ci-cd'
     - if: $CI_COMMIT_TAG
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+
+# --------------- TEST ------------- #
+
+test_backend:
+  stage: test
+  needs: []
+  script:
+    - echo "Running backend tests"
+    - cd ./battleship-backend
+    - chmod +x gradlew
+    - ./gradlew test
+    - cd ..
+  artifacts:
+    when: always
+    reports:
+      junit: "$CONTEXT_NAME/build/test-results/test/**/TEST-*.xml"
+  variables:
+    DOCKER_HOST: "tcp://docker:2375"
+    DOCKER_TLS_CERTDIR: ""
+    CONTEXT_NAME: gameRegistry
+  services:
+    - docker:27.3.1-dind
+  before_script:
+    - apk add --no-cache docker
+
+
+# ---------------- DEPLOY ------------------ #
+deploy_vnet:
+  image: mcr.microsoft.com/azure-cli
+  stage: deploy
+  when: on_success
+  before_script:
+    - az login --service-principal -u $GAME_AZURE_APP_ID -p $GAME_AZURE_PASSWORD --tenant $GAME_AZURE_TENANT
+  script:
+    - declare -A value_map=(
+      ["VNET_NAME"]="battleshipVnet"
+      ["SUBNET_NAME"]="gameSubnet"
+      ["ENV_NAME"]="env-battleship"
+      ["RG_NAME"]="rg_battleship"
+      )
+    - serialized_map=""
+    - for key in "${!value_map[@]}"; do serialized_map+="$key=${value_map[$key]} "; done
+    - chmod +x cicd/deploy-environment-vnet.sh
+    - cicd/deploy-environment-vnet.sh "$serialized_map"
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+    - if: $CI_COMMIT_BRANCH == 'ci-cd'
+    - if: $CI_COMMIT_TAG
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+
+deploy_backend:
+  image: mcr.microsoft.com/azure-cli
+  stage: deploy
+  when: on_success
+  needs:
+    - build_backend
+    - deploy_vnet
+  before_script:
+    - az login --service-principal -u $GAME_AZURE_APP_ID -p $GAME_AZURE_PASSWORD --tenant $GAME_AZURE_TENANT
+    - az extension add --name containerapp --upgrade
+    - sleep 20
+  script:
+    - declare -A value_map=(
+      ["RESOURCE_GROUP"]="rg_battleship"
+      ["CONTAINER_NAME"]="battleship-backend"
+      ["ENVIRONMENT"]="env-battleship"
+      ["IMAGE_NAME"]="backend"
+      ["PORT"]=9175
+      ["REG_USERNAME"]=$GAME_REGISTRY_USERNAME
+      ["FRONTEND_URL"]=$FRONTEND_URL
+      ["FRONTEND_HOST_URL"]=$FRONTEND_HOST_URL
+      ["BS_SDK_APIKEY"]=$API_KEY
+      ["BS_SDK_GAMEREGISTRY"]=$PROD_GAME_REGISTRY_URL
+      ["BS_SDK_GAMEPLAY"]=$PROD_GAMEPLAY_URL
+      ["BS_SDK_STATISTICS"]=$PROD_STATISTICS_URL
+      )
+    - serialized_map=""
+    - for key in "${!value_map[@]}"; do serialized_map+="$key=${value_map[$key]} "; done
+    - chmod +x cicd/deploy-context-container.sh
+    - cicd/deploy-context-container.sh "$serialized_map"
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+    - if: $CI_COMMIT_BRANCH == 'ci-cd'
+    - if: $CI_COMMIT_TAG
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+
+deploy_frontend:
+  image: mcr.microsoft.com/azure-cli
+  stage: deploy
+  when: on_success
+  needs:
+    - build_frontend
+  before_script:
+    - echo "Logging into Azure"
+    - az login --service-principal -u $GAME_AZURE_APP_ID -p $GAME_AZURE_PASSWORD --tenant $GAME_AZURE_TENANT
+  script:
+    - declare -A value_map=(
+      ["NAME"]="battleship"
+      ["RESOURCE_GROUP"]="rg_battleship"
+      ["PLAN"]="ASP_battleship"
+      ["SUBSCRIPTION"]="$SUBS_ID_GAME"
+      ["CONTAINER_IMAGE"]="$GAME_REGISTRY_USERNAME.azurecr.io/frontend"
+      ["LOCATION"]="northeurope"
+      ["SKU"]="B1"
+      )
+    - serialized_map=""
+    - for key in "${!value_map[@]}"; do serialized_map+="$key=${value_map[$key]} "; done
+    - chmod +x cicd/deploy-webapp.sh
+    - cicd/deploy-webapp.sh "$serialized_map"
+  environment:
+    name: webapp-prod
+    deployment_tier: production
+    action: start
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+    - if: $CI_COMMIT_BRANCH == 'ci-cd'
+    - if: $CI_COMMIT_TAG
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
 
 
