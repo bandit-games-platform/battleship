@@ -1,0 +1,35 @@
+default:
+  interruptible: true
+  image: eclipse-temurin:21-jdk-alpine
+
+workflow:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS'
+      when: never
+    - if: '$CI_COMMIT_BRANCH'
+    - if: $CI_COMMIT_TAG
+
+stages:
+  - build
+  - test
+  - deploy
+  - destroy
+
+build_backend:
+  stage: build
+  variables:
+    DOCKER_HOST: "tcp://docker:2375"
+    DOCKER_TLS_CERTDIR: ""
+  services:
+    - docker:27.3.1-dind
+  script:
+    - echo "Building battleship backend"
+    - chmod +x gradlew
+    - cd ./battleship-backend
+    - ../gradlew clean bootBuildImage
+    - cd ..
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+    - if: $CI_COMMIT_BRANCH == 'ci-cd'
+
