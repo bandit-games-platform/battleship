@@ -3,10 +3,10 @@ server:
     servlet:
         context-path: /api
 frontend:
-    origin_url: http://localhost:5175
-    game_host_url: http://localhost:5175/battleship
+    origin_url: ${FRONTEND_URL:http://localhost:5175}
+    game_host_url: ${FRONTEND_HOST_URL:http://localhost:5175/battleship}
     external_assets:
-        base_url: http://localhost:5175
+        base_url: ${FRONTEND_URL:http://localhost:5175}
 bandit_sdk:
     api_key: ${BS_SDK_APIKEY}
     base_url:
