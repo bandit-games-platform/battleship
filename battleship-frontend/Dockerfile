@@ -3,9 +3,10 @@ FROM node:20-alpine AS builder
 WORKDIR /app
 
 # Accept build-time environment variables (build args)
+ARG VITE_BS_BACKEND_URL
 
 # Set environment variables for the React build process
-ENV VITE_BS_BACKEND_URL="https://battleship-backend.greenplant-ee8751b1.northeurope.azurecontainerapps.io/api"
+ENV VITE_BS_BACKEND_URL=$VITE_BS_BACKEND_URL
 
 COPY package.json package-lock.json ./
 RUN npm ci
