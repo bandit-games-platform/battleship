@@ -40,32 +40,13 @@ tasks.withType<Test> {
 	useJUnitPlatform()
 }
 
-gitProperties {
-	extProperty = "gitProps"
-}
-
-tasks.named("generateGitProperties") {
-	outputs.upToDateWhen { false }
-}
-
-tasks.register("printGitProperties") {
-	dependsOn("generateGitProperties")
-	doLast {
-		val gitProps = project.extra["gitProps"]
-		if (gitProps is Map<*, *>) {
-			println("git.commit.id.abbrev=${gitProps["git.commit.id.abbrev"]}")
-		} else {
-			println("nothing found")
-		}
-	}
-}
 
 tasks.named<org.springframework.boot.gradle.tasks.bundling.BootBuildImage>("bootBuildImage") {
 	builder.set("paketobuildpacks/builder-jammy-base:latest")
 	imageName.set("acrbattleshipgame.azurecr.io/backend")
 	tags.set(
 		listOf(
-			"acrbattleshipgame.azurecr.io/backend:${(project.ext["gitProps"] as? Map<*, *>)?.get("git.commit.id.abbrev")}"
+			"acrbattleshipgame.azurecr.io/backend:latest"
 		)
 	)
 	publish.set(true)
