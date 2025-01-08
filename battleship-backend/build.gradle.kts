@@ -59,16 +59,10 @@ tasks.register("printGitProperties") {
 tasks.named<org.springframework.boot.gradle.tasks.bundling.BootBuildImage>("bootBuildImage") {
 	builder.set("paketobuildpacks/builder-jammy-base:latest")
 	imageName.set("acrbattleshipgame.azurecr.io/backend")
-
-	val gitProps = project.extra["gitProps"]
-	val abbrevTag = if (gitProps is Map<*, *>) {
-		gitProps["git.commit.id.abbrev"]?.toString() ?: "unknown"
-	} else {
-		"unknown"
-	}
-
 	tags.set(
-		listOf("acrbattleshipgame.azurecr.io/backend:$abbrevTag")
+		listOf(
+			"acrbattleshipgame.azurecr.io/backend:${(project.ext["gitProps"] as? Map<*, *>)?.get("git.commit.id.abbrev")}"
+		)
 	)
 	publish.set(true)
 	docker {
@@ -77,7 +71,7 @@ tasks.named<org.springframework.boot.gradle.tasks.bundling.BootBuildImage>("boot
 			password.set(System.getenv("GAME_REGISTRY_PASSWORD"))
 		}
 	}
-	archiveFile.set(tasks.named("bootJar").get().outputs.files.singleFile)
+	archiveFile.set(tasks.getByName<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar").archiveFile)
 }
 
 tasks.named("bootBuildImage") {
