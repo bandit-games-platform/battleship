@@ -49,21 +49,6 @@ az containerapp up --name $CONTAINER_NAME --resource-group $RESOURCE_GROUP \
   --image "$REG_USERNAME".azurecr.io/$IMAGE_NAME:"latest" \
   --target-port $PORT --ingress external
 
-SECRET_ARGS=()
-SECRET_ARGS+=("database-usr-pwd=$PG_PASSWORD")
-
-if [ -n "$KEYCLOAK_CLIENT_SECRET" ]; then
-  SECRET_ARGS+=("keycloak-client-secret=$KEYCLOAK_CLIENT_SECRET")
-fi
-if [ -n "$STRIPE_API_KEY" ]; then
-  SECRET_ARGS+=("stripe-api-key=$STRIPE_API_KEY")
-fi
-
-az containerapp secret set --name $CONTAINER_NAME --resource-group $RESOURCE_GROUP \
-      --secrets "${SECRET_ARGS[@]}"
-
-unset SECRET_STRING
-
 ENV_VAR_ARGS=()
 
 if [ -n "$BS_SDK_STATISTICS" ]; then
