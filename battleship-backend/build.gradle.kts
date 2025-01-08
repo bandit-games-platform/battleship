@@ -40,6 +40,10 @@ tasks.withType<Test> {
 	useJUnitPlatform()
 }
 
+project.ext["gitProps"] = mapOf(
+	"git.commit.id.abbrev" to "null"
+)
+
 tasks.named("generateGitProperties") {
 	outputs.upToDateWhen { false }
 }
