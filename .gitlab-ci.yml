@@ -27,7 +27,7 @@ build_backend:
     - echo "Building battleship backend"
     - cd ./battleship-backend
     - chmod +x gradlew
-    - ../gradlew clean bootBuildImage
+    - ./gradlew clean bootBuildImage
     - cd ..
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
@@ -45,7 +45,7 @@ build_frontend:
     - docker login $GAME_REGISTRY_USERNAME.azurecr.io -u $GAME_REGISTRY_USERNAME -p $GAME_REGISTRY_PASSWORD
   script:
     - echo "Building and tagging game frontend project"
-    - cd./battleship-frontend
+    - cd ./battleship-frontend
     - docker build
       --build-arg VITE_BS_BACKEND_URL=$GAME_BACKEND_URL
       -t $GAME_REGISTRY_USERNAME.azurecr.io/bandit-frontend-dev:latest
