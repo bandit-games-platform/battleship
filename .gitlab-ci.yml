@@ -25,8 +25,8 @@ build_backend:
     - docker:27.3.1-dind
   script:
     - echo "Building battleship backend"
-    - chmod +x gradlew
     - cd ./battleship-backend
+    - chmod +x gradlew
     - ../gradlew clean bootBuildImage
     - cd ..
   rules:
@@ -45,12 +45,14 @@ build_frontend:
     - docker login $GAME_REGISTRY_USERNAME.azurecr.io -u $GAME_REGISTRY_USERNAME -p $GAME_REGISTRY_PASSWORD
   script:
     - echo "Building and tagging game frontend project"
+    - cd./battleship-frontend
     - docker build
       --build-arg VITE_BS_BACKEND_URL=$GAME_BACKEND_URL
       -t $GAME_REGISTRY_USERNAME.azurecr.io/bandit-frontend-dev:latest
       .
     - echo "Publishing frontend dev image to Azure"
     - docker push $GAME_REGISTRY_USERNAME.azurecr.io/bandit-frontend-dev:latest
+    - cd ..
   services:
     - docker:27.3.1-dind
   variables:
