@@ -20,14 +20,6 @@ class ArrangeShipsServiceTest extends BaseTest {
     @Autowired
     private LobbyRepository repository;
 
-    private static final List<Ship> GOOD_ARRANGEMENT = Arrays.asList(
-            new Ship(ShipType.CARRIER, new Coordinate(0, 1), false),
-            new Ship(ShipType.BATTLESHIP, new Coordinate(2, 1), false),
-            new Ship(ShipType.CRUISER, new Coordinate(5, 5), false),
-            new Ship(ShipType.SUBMARINE, new Coordinate(3, 1), true),
-            new Ship(ShipType.DESTROYER, new Coordinate(7, 3), true)
-    );
-
     @BeforeEach
     void setUp() {
         // Arrange

@@ -15,7 +15,7 @@ public class Board {
 
     public Board(List<Ship> arrangedShips) {
         if (!isValidArrangement(arrangedShips)) throw new IllegalStateException("Some ships seem to be overlapping in this arrangement");
-        this.aliveShips = arrangedShips;
+        this.aliveShips = new ArrayList<>(arrangedShips);
         this.sunkShips = new ArrayList<>();
         this.shots = new HashSet<>();
     }
