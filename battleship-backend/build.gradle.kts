@@ -2,6 +2,7 @@ plugins {
 	java
 	id("org.springframework.boot") version "3.4.1"
 	id("io.spring.dependency-management") version "1.1.7"
+	id("com.gorylenko.gradle-git-properties") version "2.4.1"
 }
 
 group = "be.kdg.int5"
@@ -27,8 +28,37 @@ dependencies {
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.springframework.security:spring-security-test")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+
+	//Spring cloud AZURE
+	implementation("com.azure.spring:spring-cloud-azure-starter-actuator:4.3.0")
+	implementation("com.azure.spring:spring-cloud-azure-starter-keyvault:4.3.0")
+	implementation("com.azure.spring:spring-cloud-azure-starter:4.3.0")
+	implementation("com.azure.spring:spring-cloud-azure-dependencies:5.7.0")
 }
 
 tasks.withType<Test> {
 	useJUnitPlatform()
+}
+
+
+tasks.named<org.springframework.boot.gradle.tasks.bundling.BootBuildImage>("bootBuildImage") {
+	builder.set("paketobuildpacks/builder-jammy-base:latest")
+	imageName.set("acrbattleshipgame.azurecr.io/backend")
+	tags.set(
+		listOf(
+			"acrbattleshipgame.azurecr.io/backend:latest"
+		)
+	)
+	publish.set(true)
+	docker {
+		publishRegistry {
+			username.set(System.getenv("GAME_REGISTRY_USERNAME"))
+			password.set(System.getenv("GAME_REGISTRY_PASSWORD"))
+		}
+	}
+	archiveFile.set(tasks.getByName<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar").archiveFile)
+}
+
+tasks.named("bootBuildImage") {
+	dependsOn("generateGitProperties")
 }
