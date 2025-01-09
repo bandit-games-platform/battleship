@@ -42,7 +42,7 @@ public class GameConfig {
                 "A Classic Game... Reimagined.",
                 null,
                 assetsBaseUrl+"/icon.png",
-                assetsBaseUrl+"/cover_art.png",
+                assetsBaseUrl+"/screenshots/cover_art.png",
                 Arrays.asList(
                         new Rule(1, "The two players first must arrange all their ships on the board then press Ready. Once both players are ready the game starts."),
                         new Rule(2, "Each turn a player picks a grid cell on the board to fire at."),
@@ -52,10 +52,11 @@ public class GameConfig {
                         new Rule(6, "The game goes on until a player's ships have all Sunk. At this point the other player is declared the Winner!")
                 ),
                 Arrays.asList(
-                        assetsBaseUrl+"/cover_art.png",
+                        assetsBaseUrl+"/screenshots/cover_art.png",
                         assetsBaseUrl+"/screenshots/board_arrangement.png",
                         assetsBaseUrl+"/screenshots/board_targeting.png",
                         assetsBaseUrl+"/screenshots/board_hit.png",
+                        assetsBaseUrl+"/screenshots/in_progress.png",
                         assetsBaseUrl+"/screenshots/all_ships_sunk.png"
                 ),
                 Arrays.stream(Achievements.values()).map(Achievements::toSDK).toList()

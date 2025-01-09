@@ -60,8 +60,8 @@ export function LobbyQueue({setScene}: LobbyQueueProps) {
             if (!player) {
                 const noPlayerText = new PIXI.Text('Joining lobby...', {fill: '#4F7942'})
                 noPlayerText.anchor.set(0.5);
-                noPlayerText.x = app.view.width / 2;
-                noPlayerText.y = app.view.height / 2;
+                noPlayerText.x = canvasSize.width / 2;
+                noPlayerText.y = canvasSize.height / 2;
                 app.stage.addChild(noPlayerText);
 
                 return () => {
@@ -74,8 +74,8 @@ export function LobbyQueue({setScene}: LobbyQueueProps) {
             button.beginFill(0x000000);
             button.drawRect(0, 0, 200, 50);
             button.endFill();
-            button.x = app.view.width / 2 - 100;
-            button.y = (app.view.height / 3) * 2;
+            button.x = canvasSize.width / 2 - 100;
+            button.y = (canvasSize.height / 3) * 2;
             button.eventMode = 'static';
             button.on('pointerdown', toggleReadiness);
 
@@ -93,17 +93,17 @@ export function LobbyQueue({setScene}: LobbyQueueProps) {
                 const player = currentLobby.players[i];
                 const card = new PIXI.Graphics();
                 card.beginFill(0x1434A4);
-                card.drawRoundedRect(0, 0, app.view.width / 8, app.view.width / 5, 20);
+                card.drawRoundedRect(0, 0, canvasSize.width / 6, canvasSize.height / 2, 20);
                 card.endFill();
 
                 if (numberPlayers === 1) {
-                    card.x = (app.view.width / 2) - 100
+                    card.x = (canvasSize.width / 2) - card.width / 2
                 } else {
-                    card.x = ((app.view.width / 5) * (2 + i)) - 100
+                    card.x = ((canvasSize.width / 5) * (2 + i)) - card.width / 2
                 }
-                card.y = (app.view.height / 5) * 2 - 150;
+                card.y = (canvasSize.height / 3) - card.height / 2;
 
-                const readyText = new PIXI.Text(player.ready ? 'Ready' : 'Not Ready', { fontSize: 24, fill: '#ffffff' });
+                const readyText = new PIXI.Text(player.ready ? 'Ready' : 'Not Ready', { fontSize: card.width * 0.15 / card.scale.x, fill: '#ffffff' });
                 readyText.anchor.set(0.5);
                 readyText.x = card.width / 2;
                 readyText.y = 25;
@@ -112,7 +112,7 @@ export function LobbyQueue({setScene}: LobbyQueueProps) {
                 let playerNumberText = "Player " + (i + 1);
                 if (player.playerId === playerId) playerNumberText += " (you)"
 
-                const playerText = new PIXI.Text(playerNumberText, { fontSize: 20, fill: '#ffffff' });
+                const playerText = new PIXI.Text(playerNumberText, { fontSize: card.width * 0.15 / card.scale.x, fill: '#ffffff' });
                 playerText.anchor.set(0.5);
                 playerText.x = card.width / 2;
                 playerText.y = card.height - 25;
@@ -120,8 +120,8 @@ export function LobbyQueue({setScene}: LobbyQueueProps) {
 
                 const playerImage = PIXI.Sprite.from('../assets/captain.png');
                 playerImage.anchor.set(0.5);
-                playerImage.width = card.width - 25;
-                playerImage.height = card.width - 25;
+                playerImage.width = card.width * 0.8 / card.scale.x;
+                playerImage.height = card.width * 0.8 / card.scale.x;
                 playerImage.x = card.width / 2;
                 playerImage.y = card.height / 2;
                 card.addChild(playerImage);
