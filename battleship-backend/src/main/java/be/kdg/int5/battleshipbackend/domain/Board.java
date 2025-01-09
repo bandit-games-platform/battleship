@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class Board {
     public static final int BOARD_ROWS = 10;
@@ -15,7 +16,10 @@ public class Board {
 
     public Board(List<Ship> arrangedShips) {
         if (!isValidArrangement(arrangedShips)) throw new IllegalStateException("Some ships seem to be overlapping in this arrangement");
-        this.aliveShips = new ArrayList<>(arrangedShips);
+        this.aliveShips = arrangedShips
+                .stream()
+                .map(s -> new Ship(s.getType(), s.getPlacement(), s.isVertical()))
+                .collect(Collectors.toList());
         this.sunkShips = new ArrayList<>();
         this.shots = new HashSet<>();
     }

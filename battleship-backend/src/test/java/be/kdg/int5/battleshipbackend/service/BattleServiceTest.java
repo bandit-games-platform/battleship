@@ -16,6 +16,8 @@ class BattleServiceTest extends BaseTest {
     @Autowired
     private BattleService service;
     @Autowired
+    private ArrangeShipsService arrangeShipsService;
+    @Autowired
     private LobbyRepository repository;
 
     private static final Coordinate GOOD_SHOT = new Coordinate(7, 3);
@@ -29,9 +31,10 @@ class BattleServiceTest extends BaseTest {
         // Lobby in battle state
         Lobby goodLobby = new Lobby(GOOD_LOBBY, PLAYER_ONE, Arrays.asList(PLAYER_ONE, PLAYER_TWO));
         goodLobby.getPlayers().forEach(p -> p.setReady(true));
-        goodLobby.getPlayers().forEach(p -> p.setBoard(new Board(GOOD_ARRANGEMENT)));
         goodLobby.setFirstToGo(PLAYER_ONE);
         repository.save(goodLobby);
+        arrangeShipsService.submitShipArrangement(GOOD_LOBBY, PLAYER_ONE, GOOD_ARRANGEMENT);
+        arrangeShipsService.submitShipArrangement(GOOD_LOBBY, PLAYER_TWO, GOOD_ARRANGEMENT);
 
         // Lobby in arranging state
         Lobby badLobby = new Lobby(BAD_LOBBY, PLAYER_ONE, Arrays.asList(PLAYER_ONE, PLAYER_TWO));
@@ -97,10 +100,10 @@ class BattleServiceTest extends BaseTest {
     @Test
     void takeShotShouldGiveSunkForBothGoodShotsOnDestroyer() {
         // Arrange
-        service.takeShot(GOOD_LOBBY, PLAYER_ONE, GOOD_SHOT_TWO);
+        service.takeShot(GOOD_LOBBY, PLAYER_ONE, GOOD_SHOT);
 
         // Act
-        ShotResult res = service.takeShot(GOOD_LOBBY, PLAYER_ONE, GOOD_SHOT);
+        ShotResult res = service.takeShot(GOOD_LOBBY, PLAYER_ONE, GOOD_SHOT_TWO);
         // Assert
         assertNotNull(res);
 

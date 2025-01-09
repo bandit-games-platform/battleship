@@ -20,7 +20,7 @@ public abstract class BaseTest {
     protected static final PlayerId PLAYER_ONE = new PlayerId(UUID.randomUUID());
     protected static final PlayerId PLAYER_TWO = new PlayerId(UUID.randomUUID());
 
-    protected static final List<Ship> GOOD_ARRANGEMENT = Arrays.asList(
+    protected static final List<Ship> GOOD_ARRANGEMENT = List.of(
             new Ship(ShipType.CARRIER, new Coordinate(0, 1), false),
             new Ship(ShipType.BATTLESHIP, new Coordinate(2, 1), false),
             new Ship(ShipType.CRUISER, new Coordinate(5, 5), false),
