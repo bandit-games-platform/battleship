@@ -32,6 +32,29 @@ export interface BattleshipTheme {
 
     markers: {miss: string, hit: string},
 
+    main_menu: {
+        background_static_base: string,
+        foreground_static_base: string,
+        foreground_mousefollow: {
+            static_asset: string,
+            pos: {x: number, y: number},
+            angle: {
+                min: number,
+                max: number,
+                turn_rate: number
+            }
+        },
+        foreground_static_top: string,
+
+        wave_anim: {
+            wave_function: (t: number) => number,
+            offset_amplitude: {
+                background: number,
+                foreground: number
+            },
+        }
+    }
+
     effects: {
         explosion_anim: AnimSpriteSheet,
         splash_anim: AnimSpriteSheet,
