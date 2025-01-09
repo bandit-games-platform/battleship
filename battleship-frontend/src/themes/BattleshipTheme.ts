@@ -34,6 +34,7 @@ export interface BattleshipTheme {
 
     main_menu: {
         background_static_base: string,
+        background_overlay_anim: AnimSpriteSheet,
         foreground_static_base: string,
         foreground_mousefollow: {
             static_asset: string,

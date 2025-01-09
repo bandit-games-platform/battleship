@@ -27,6 +27,12 @@ export const themes: BattleshipTheme[] = [
         },
         main_menu: {
             background_static_base: assets + "concept/sunset_background.png",
+            background_overlay_anim: {
+                src: assets + "concept/sunset_water.png",
+                cols: 3,
+                rows: 2,
+                speed: 0.1
+            },
             foreground_static_base: assets + "concept/sunset_ship.png",
             foreground_mousefollow: {
                 static_asset: assets + "concept/sunset_turretgun.png",

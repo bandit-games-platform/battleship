@@ -1,11 +1,12 @@
 import {useContext, useEffect, useRef, useState} from 'react';
 import * as PIXI from 'pixi.js';
-import {Assets, FederatedPointerEvent, Sprite} from 'pixi.js';
+import {AnimatedSprite, Assets, FederatedPointerEvent, Sprite} from 'pixi.js';
 import {AppContext} from "../context/AppContext.ts";
 import {useCreateLobby} from "../hooks/useCreateLobby.ts";
 import {IdentityContext} from "../context/IdentityContext.ts";
 import {SettingsMenu} from "../components/SettingsMenu.tsx";
 import {ThemeContext} from "../context/ThemeContext.ts";
+import {splitAnimationFrames} from "../utils/textureSplitter.ts";
 
 interface MainMenuProps {
     setScene: (scene: string) => void
@@ -22,6 +23,7 @@ export function MainMenu({ setScene, setLobbyId }: MainMenuProps) {
     
     const animTime = useRef<number>(0);
     const [bgBaseSprite, setBgBaseSprite] = useState<Sprite>();
+    const [bgOverlayAnim, setBgOverlayAnim] = useState<AnimatedSprite>();
     const [fgBaseSprite, setFgBaseSprite] = useState<Sprite>();
     const [fgMouseFollowSprite, setFgMouseFollowSprite] = useState<Sprite>();
     const [fgTopSprite, setFgTopSprite] = useState<Sprite>();
@@ -36,6 +38,13 @@ export function MainMenu({ setScene, setLobbyId }: MainMenuProps) {
         Assets.load(theme.main_menu.background_static_base).then(res => {
             setBgBaseSprite(new Sprite(res));
         });
+        splitAnimationFrames(theme.main_menu.background_overlay_anim).then(res => {
+            const anim = new AnimatedSprite(res.frames);
+            anim.animationSpeed = theme.main_menu.background_overlay_anim.speed ?? 0.1;
+            anim.loop = true;
+            anim.play();
+            setBgOverlayAnim(anim);
+        })
         Assets.load(theme.main_menu.foreground_static_base).then(res => {
             setFgBaseSprite(new Sprite(res));
         });
@@ -49,7 +58,8 @@ export function MainMenu({ setScene, setLobbyId }: MainMenuProps) {
     }, [theme.main_menu]);
 
     useEffect(() => {
-        if (app && app.stage && bgBaseSprite && fgBaseSprite && fgTopSprite && fgMouseFollowSprite) {
+        if (app && app.stage && bgBaseSprite && fgBaseSprite && fgTopSprite && fgMouseFollowSprite && bgOverlayAnim) {
+            app.stage.sortableChildren = true;
             const wave_anim = theme.main_menu.wave_anim;
             const mousefollow = theme.main_menu.foreground_mousefollow;
 
@@ -58,9 +68,18 @@ export function MainMenu({ setScene, setLobbyId }: MainMenuProps) {
             bgBaseSprite.x = canvasSize.width/2;
             bgBaseSprite.y = canvasSize.height/2;
             const backgroundScalingFactor =  (1 + wave_anim.offset_amplitude.background * 2);
-            bgBaseSprite.height = canvasSize.height * backgroundScalingFactor;
             bgBaseSprite.width = canvasSize.width * backgroundScalingFactor;
+            bgBaseSprite.height = canvasSize.height * backgroundScalingFactor;
             app.stage.addChild(bgBaseSprite);
+
+            bgOverlayAnim.zIndex = -80;
+            bgOverlayAnim.anchor.set(0.5);
+            bgOverlayAnim.x = canvasSize.width/2;
+            bgOverlayAnim.y = canvasSize.height/2;
+            bgOverlayAnim.width = canvasSize.width * backgroundScalingFactor;
+            bgOverlayAnim.height = canvasSize.height * backgroundScalingFactor;
+            app.stage.addChild(bgOverlayAnim);
+
 
             fgBaseSprite.zIndex = -50;
             fgBaseSprite.anchor.set(0.5);
@@ -94,7 +113,9 @@ export function MainMenu({ setScene, setLobbyId }: MainMenuProps) {
                 animTime.current += delta;
                 // Wave animation
                 const offset = wave_anim.wave_function(animTime.current);
-                bgBaseSprite.y = canvasSize.height/2 + offset * wave_anim.offset_amplitude.background * canvasSize.height;
+                const backgroundY = canvasSize.height/2 + offset * wave_anim.offset_amplitude.background * canvasSize.height;
+                bgBaseSprite.y = backgroundY;
+                bgOverlayAnim.y = backgroundY;
                 const foregroundY = canvasSize.height/2 - offset * wave_anim.offset_amplitude.foreground * canvasSize.height;
                 fgBaseSprite.y = foregroundY;
                 fgTopSprite.y = foregroundY;
@@ -123,12 +144,12 @@ export function MainMenu({ setScene, setLobbyId }: MainMenuProps) {
             app.ticker.add(animate);
 
             return () => {
-                app.stage.removeChild(bgBaseSprite, fgBaseSprite, fgMouseFollowSprite, fgTopSprite);
+                app.stage.removeChild(bgBaseSprite, fgBaseSprite, fgMouseFollowSprite, fgTopSprite, bgOverlayAnim);
                 fgMouseFollowSprite.off('globalpointermove', updateMousePos);
                 app.ticker.remove(animate);
             }
         }
-    }, [app, bgBaseSprite, canvasSize, fgBaseSprite, fgMouseFollowSprite, fgTopSprite, theme.main_menu.foreground_mousefollow, theme.main_menu.wave_anim]);
+    }, [app, bgBaseSprite, bgOverlayAnim, canvasSize, fgBaseSprite, fgMouseFollowSprite, fgTopSprite, theme.main_menu.foreground_mousefollow, theme.main_menu.wave_anim]);
 
     useEffect(() => {
         const handleStartGame = () => {
@@ -186,7 +207,7 @@ export function MainMenu({ setScene, setLobbyId }: MainMenuProps) {
                 buttonSettings.destroy(true);
             };
         }
-    }, [app, canvasSize, createLobby, creatingLobby, failedToCreateLobby, playerId, setLobbyId, setScene, settingsOpen, bgBaseSprite, buttonWidth, buttonHeight, firstButtonY, buttonFontSize]);
+    }, [app, canvasSize, createLobby, creatingLobby, failedToCreateLobby, playerId, setLobbyId, setScene, settingsOpen, buttonWidth, buttonHeight, firstButtonY, buttonFontSize]);
 
     return (
         <>
