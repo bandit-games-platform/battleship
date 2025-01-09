@@ -79,7 +79,7 @@ test_backend:
   artifacts:
     when: always
     reports:
-      junit: "$CONTEXT_NAME/build/test-results/test/**/TEST-*.xml"
+      junit: "battleship-backend/build/test-results/test/**/TEST-*.xml"
   variables:
     DOCKER_HOST: "tcp://docker:2375"
     DOCKER_TLS_CERTDIR: ""
