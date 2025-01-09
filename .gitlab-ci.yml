@@ -140,6 +140,7 @@ deploy_backend:
       ["BS_SDK_GAMEREGISTRY"]=$PROD_GAME_REGISTRY_URL
       ["BS_SDK_GAMEPLAY"]=$PROD_GAMEPLAY_URL
       ["BS_SDK_STATISTICS"]=$PROD_STATISTICS_URL
+      ["SCALE_DOWN"]=false
       )
     - serialized_map=""
     - for key in "${!value_map[@]}"; do serialized_map+="$key=${value_map[$key]} "; done
