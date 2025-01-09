@@ -2,5 +2,8 @@
 # Paint.NET files
 *.pdn
 
+# Pencil 2D project files
+*.pclx
+
 # Work In Progress folders
 **/wip

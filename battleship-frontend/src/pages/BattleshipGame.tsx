@@ -61,7 +61,6 @@ export function BattleshipGame() {
             <ThemeProvider>
                 <CanvasManager>
                     <>
-                        Scene: {scene}
                         {scene === "main_menu" && <MainMenu setScene={setScene} setLobbyId={setLobbyId} />}
                         {scene === "lobby_queue" && <LobbyQueue setScene={setScene} />}
                         {scene === "arrange_ships" && <ArrangeShips setScene={setScene} />}
