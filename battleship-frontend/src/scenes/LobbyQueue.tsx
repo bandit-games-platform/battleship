@@ -47,7 +47,7 @@ export function LobbyQueue({setScene}: LobbyQueueProps) {
 
         if (app && app.stage) {
             const background = new PIXI.Graphics();
-            background.beginFill(0x1099bb);
+            background.beginFill(0x5F9EA0);
             background.drawRect(0, 0, app.view.width, app.view.height);
             background.endFill();
             app.stage.addChild(background);
@@ -93,7 +93,7 @@ export function LobbyQueue({setScene}: LobbyQueueProps) {
                 const player = currentLobby.players[i];
                 const card = new PIXI.Graphics();
                 card.beginFill(0x1434A4);
-                card.drawRoundedRect(0, 0, 200, 300, 20);
+                card.drawRoundedRect(0, 0, app.view.width / 8, app.view.width / 5, 20);
                 card.endFill();
 
                 if (numberPlayers === 1) {
@@ -120,8 +120,8 @@ export function LobbyQueue({setScene}: LobbyQueueProps) {
 
                 const playerImage = PIXI.Sprite.from('../assets/captain.png');
                 playerImage.anchor.set(0.5);
-                playerImage.width = 150;
-                playerImage.height = 150;
+                playerImage.width = card.width - 25;
+                playerImage.height = card.width - 25;
                 playerImage.x = card.width / 2;
                 playerImage.y = card.height / 2;
                 card.addChild(playerImage);

@@ -1,5 +1,6 @@
 package be.kdg.int5.battleshipbackend.domain;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -9,6 +10,7 @@ public class Lobby {
     private List<Player> players;
     private PlayerId firstToGo;
     private int turnNumber;
+    private LocalDateTime battleStartTime = null;
 
     public Lobby(LobbyId id, PlayerId ownerId, List<PlayerId> players) {
         this.id = id;
@@ -59,6 +61,18 @@ public class Lobby {
 
     public void setPlayers(List<Player> players) {
         this.players = players;
+    }
+
+    public void setTurnNumber(int turnNumber) {
+        this.turnNumber = turnNumber;
+    }
+
+    public LocalDateTime getBattleStartTime() {
+        return battleStartTime;
+    }
+
+    public void setBattleStartTime(LocalDateTime battleStartTime) {
+        this.battleStartTime = battleStartTime;
     }
 
     public Player getPlayer(PlayerId player) {
@@ -117,5 +131,27 @@ public class Lobby {
         } else {
             return firstToGo;
         }
+    }
+
+    public void resetLobby() {
+        if (getGameStage() != GameStage.FINISHED) {
+            return;
+        }
+
+        for (Player player : players) {
+            if (!player.votedToRestart()) {
+                return;
+            }
+        }
+
+        firstToGo = null;
+        turnNumber = 1;
+        battleStartTime = null;
+
+        players.forEach(player -> {
+            player.setBoard(null);
+            player.setReady(false);
+            player.setVoteToRestart(false);
+        });
     }
 }

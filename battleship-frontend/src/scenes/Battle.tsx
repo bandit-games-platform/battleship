@@ -199,10 +199,14 @@ export function Battle({setScene}: BattleProps) {
     useEffect(() => {
         if (lobby) {
             if (lobby.stage === "finished") {
+                if (backgroundMusic) {
+                    backgroundMusic.pause();
+                    backgroundMusic.remove();
+                }
                 setScene("end_state")
             }
         }
-    }, [lobby, setScene])
+    }, [backgroundMusic, lobby, setScene])
 
     useEffect(() => {
         if (battleStatus) {
