@@ -118,7 +118,6 @@ export function MainMenu({ setScene, setLobbyId }: MainMenuProps) {
 
                 const newAngle = fgMouseFollowSprite.angle + constrainedAngleChange * delta;
                 fgMouseFollowSprite.angle = Math.min(mousefollow.angle.max, Math.max(mousefollow.angle.min, newAngle));
-                console.log({targetAngle, deltaAngle, newAngle})
             }
 
             app.ticker.add(animate);

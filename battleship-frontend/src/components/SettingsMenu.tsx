@@ -11,17 +11,16 @@ interface SettingsMenuProps {
     height: number
 }
 
-const margin = 10;
-const setting_labels_style: Partial<ITextStyle> = {fontSize: 24, fill: '#333', fontWeight: "bold"};
-const inner_settings_style: Partial<ITextStyle> = {fontSize: 20, fill: '#000'};
-
-
 export function SettingsMenu({x, y, width, height}: SettingsMenuProps) {
     const {app} = useContext(AppContext);
     const {theme, nextTheme, prevTheme} = useContext(ThemeContext);
 
     useEffect(() => {
         if (app && app.stage) {
+            const margin = 0.08 * height;
+            const setting_labels_style: Partial<ITextStyle> = {fontSize: 0.1 * height, fill: '#333', fontWeight: "bold"};
+            const inner_settings_style: Partial<ITextStyle> = {fontSize: 0.08 * height, fill: '#000'};
+
             const background = new PIXI.Graphics();
             background.beginFill(0xffffff, 0.2);
             background.drawRoundedRect(0, 0, width, height, 20);
