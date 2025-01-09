@@ -25,6 +25,33 @@ export const themes: BattleshipTheme[] = [
             miss: assets + "concept/ship_miss_marker.png",
             hit: assets + "concept/ship_hit_marker.png",
         },
+        main_menu: {
+            background_static_base: assets + "concept/sunset_background.png",
+            background_overlay_anim: {
+                src: assets + "concept/sunset_water.png",
+                cols: 3,
+                rows: 2,
+                speed: 0.1
+            },
+            foreground_static_base: assets + "concept/sunset_ship.png",
+            foreground_mousefollow: {
+                static_asset: assets + "concept/sunset_turretgun.png",
+                pos: {x: 1125, y: 715},
+                angle: {
+                    min: -5,
+                    max: 55,
+                    turn_rate: 0.5
+                }
+            },
+            foreground_static_top: assets + "concept/sunset_turretcover.png",
+            wave_anim: {
+                wave_function: t => 0.6 * Math.sin(0.03*t) + 0.3 * Math.sin(0.04*t) + 0.1 * Math.sin(-0.13*t),
+                offset_amplitude: {
+                    background: 0.025,
+                    foreground: 0.0125
+                }
+            },
+        },
         effects: {
             explosion_anim: {
                 src: assets + "concept/effects/explosion.png",
