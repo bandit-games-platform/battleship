@@ -67,27 +67,27 @@ build_frontend:
 
 # --------------- TEST ------------- #
 
-#test_backend:
-#  stage: test
-#  needs: []
-#  script:
-#    - echo "Running backend tests"
-#    - cd ./battleship-backend
-#    - chmod +x gradlew
-#    - ./gradlew test
-#    - cd ..
-#  artifacts:
-#    when: always
-#    reports:
-#      junit: "$CONTEXT_NAME/build/test-results/test/**/TEST-*.xml"
-#  variables:
-#    DOCKER_HOST: "tcp://docker:2375"
-#    DOCKER_TLS_CERTDIR: ""
-#    CONTEXT_NAME: gameRegistry
-#  services:
-#    - docker:27.3.1-dind
-#  before_script:
-#    - apk add --no-cache docker
+test_backend:
+  stage: test
+  needs: []
+  script:
+    - echo "Running backend tests"
+    - cd ./battleship-backend
+    - chmod +x gradlew
+    - ./gradlew test
+    - cd ..
+  artifacts:
+    when: always
+    reports:
+      junit: "battleship-backend/build/test-results/test/**/TEST-*.xml"
+  variables:
+    DOCKER_HOST: "tcp://docker:2375"
+    DOCKER_TLS_CERTDIR: ""
+    CONTEXT_NAME: gameRegistry
+  services:
+    - docker:27.3.1-dind
+  before_script:
+    - apk add --no-cache docker
 
 
 # ---------------- DEPLOY ------------------ #
