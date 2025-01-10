@@ -15,6 +15,7 @@ import {SplashSprite} from "../components/effects/SplashSprite.tsx";
 import {NewShotDisplay} from "../components/NewShotDisplay.tsx";
 import {ThemeContext} from "../context/ThemeContext.ts";
 import {Sprite} from "pixi.js";
+import {useQueryClient} from "@tanstack/react-query";
 
 interface BattleProps {
     setScene: (scene: string) => void
@@ -26,14 +27,16 @@ interface BattleRendererProps {
     lobbyError: boolean
     boardMargin: number
     boardSize: number,
-    toggleBackgroundMusic: () => void
+    toggleBackgroundMusic: () => void,
+    musicPlaying: boolean,
+    turnOf: string
 }
 
-function BattleRenderer({lobby, lobbyLoading, lobbyError, boardMargin, boardSize, toggleBackgroundMusic}: BattleRendererProps) {
+function BattleRenderer({lobby, lobbyLoading, lobbyError, boardMargin, boardSize, toggleBackgroundMusic, musicPlaying, turnOf}: BattleRendererProps) {
     const {app, canvasSize} = useContext(AppContext);
     const {playerId} = useContext(IdentityContext);
     const {theme} = useContext(ThemeContext);
-    const [musicIcon, setMusicIcon] = useState(theme.music_icons.unmuted);
+    const [musicIcon, setMusicIcon] = useState(musicPlaying ? theme.music_icons.unmuted : theme.music_icons.muted);
 
     useEffect(() => {
         const toggleMusic = () => {
@@ -71,8 +74,10 @@ function BattleRenderer({lobby, lobbyLoading, lobbyError, boardMargin, boardSize
             app.stage.addChild(opponentBoardText);
 
             const turnText = new PIXI.Text("Turn", { fontSize: 40, fill: '#097969', fontFamily: "Impact" })
-            if (lobby.turnOf != playerId) {
-                turnText.text = "Waiting for Opponents Shot...."
+            if (turnOf == "null") {
+                turnText.text = "Loading battle status..."
+            }else if (turnOf != playerId) {
+                turnText.text = "Waiting for Opponent's Shot...."
             } else {
                 turnText.text = "It's your turn!"
             }
@@ -114,7 +119,7 @@ function BattleRenderer({lobby, lobbyLoading, lobbyError, boardMargin, boardSize
                 musicIconDisplay.off("pointerdown", toggleMusic)
             }
         }
-    }, [app, boardMargin, boardSize, canvasSize, lobby, lobbyError, lobbyLoading, musicIcon, playerId, theme.music_icons.muted, theme.music_icons.unmuted, toggleBackgroundMusic]);
+    }, [app, boardMargin, boardSize, canvasSize, lobby, lobbyError, lobbyLoading, musicIcon, playerId, theme.music_icons.muted, theme.music_icons.unmuted, toggleBackgroundMusic, turnOf]);
 
     return null;
 
@@ -124,6 +129,7 @@ export function Battle({setScene}: BattleProps) {
     const {canvasSize} = useContext(AppContext);
     const {theme} = useContext(ThemeContext);
     const {lobbyId, playerId} = useContext(IdentityContext);
+    const queryClient = useQueryClient();
 
     const {lobby, isLoading: lobbyLoading, isError: lobbyError} = useGetLobbyState(lobbyId);
     const [explosionPosition, setExplosionPosition] = useState({col: -1, row: -1})
@@ -135,7 +141,11 @@ export function Battle({setScene}: BattleProps) {
     const {battleStatus} = useGetBattleStatus(playerId, lobbyId?lobbyId:"")
 
     const [backgroundMusic, setBackgroundMusic] = useState<HTMLAudioElement>();
-    const [backgroundMusicPlaying, setBackgroundMusicPlaying] = useState(true);
+    const [backgroundMusicPlaying, setBackgroundMusicPlaying] = useState(() => {
+            const unmuted = sessionStorage.getItem("music-unmuted-"+playerId);
+            return unmuted ? JSON.parse(unmuted) : true;
+        }
+    );
 
     useEffect(() => {
         const backgroundMusicAudio = new Audio(theme.sounds.battle_music);
@@ -144,7 +154,10 @@ export function Battle({setScene}: BattleProps) {
         setBackgroundMusic(backgroundMusicAudio);
     }, [theme.sounds])
 
-    const toggleBackgroundMusic = () => setBackgroundMusicPlaying(!backgroundMusicPlaying);
+    const toggleBackgroundMusic = () => {
+        setBackgroundMusicPlaying(!backgroundMusicPlaying);
+        sessionStorage.setItem("music-unmuted-"+playerId, String(!backgroundMusicPlaying))
+    }
 
     useEffect(() => {
         if (backgroundMusic) {
@@ -166,9 +179,9 @@ export function Battle({setScene}: BattleProps) {
 
     const compareShotArrays = (
         knownHits: { col: number; row: number; miss: boolean }[],
-        newHits: { col: number; row: number; miss: boolean }[]
+        currentHits: { col: number; row: number; miss: boolean }[]
     ) => {
-        const newEntries = newHits.filter(
+        const newEntries = currentHits.filter(
             (hit) =>
                 !knownHits.some(
                     (knownHit) =>
@@ -203,23 +216,24 @@ export function Battle({setScene}: BattleProps) {
                     backgroundMusic.pause();
                     backgroundMusic.remove();
                 }
+                queryClient.removeQueries({queryKey: ['lobby-player', lobbyId+"-"+playerId]});
                 setScene("end_state")
             }
         }
-    }, [backgroundMusic, lobby, setScene])
+    }, [backgroundMusic, lobby, lobbyId, playerId, queryClient, setScene])
 
     useEffect(() => {
         if (battleStatus) {
-            const newHits = battleStatus.shotsOnOurShips;
+            const currentHits = battleStatus.shotsOnOurShips;
 
             const {areDifferent, newEntries} = compareShotArrays(
                 previousHitsOnFleet || [],
-                newHits
+                currentHits
             )
 
             if (areDifferent) {
                 setNewHits(newEntries);
-                setPreviousHitsOnFleet(newHits);
+                setPreviousHitsOnFleet(currentHits);
             }
         }
     }, [battleStatus, previousHitsOnFleet])
@@ -241,6 +255,8 @@ export function Battle({setScene}: BattleProps) {
                 boardMargin={boardMargin}
                 boardSize={boardSize}
                 toggleBackgroundMusic={toggleBackgroundMusic}
+                musicPlaying={backgroundMusicPlaying}
+                turnOf={battleStatus? battleStatus.turnOf: "null"}
             />
 
             {!lobbyLoading && !lobbyError && (
@@ -250,6 +266,14 @@ export function Battle({setScene}: BattleProps) {
 
                     {battleStatus && (
                         <>
+                            {newHits && newHits.map((shot) => (
+                                <NewShotDisplay
+                                    shot={shot}
+                                    key={shot.col + "-" + shot.row}
+                                    onDisplayComplete={() => removeHit(shot)}
+                                />
+                            ))}
+
                             {battleStatus.ourAliveShips.map((ship) => {
                                 const shipYPos = ship.placementCoordinate.row * shipSize + boardY;
                                 const shipXPos = ship.placementCoordinate.col * shipSize + yourBoardX;
@@ -320,14 +344,6 @@ export function Battle({setScene}: BattleProps) {
                                     />
                                 )
                             })}
-
-                            {newHits && newHits.map((shot) => (
-                                <NewShotDisplay
-                                    shot={shot}
-                                    key={shot.col + "-" + shot.row}
-                                    onDisplayComplete={() => removeHit(shot)}
-                                />
-                            ))}
                         </>
                     )}
 
@@ -337,6 +353,7 @@ export function Battle({setScene}: BattleProps) {
                             size={boardSize}
                             squareSize={shipSize}
                             lobby={lobby}
+                            battleStatus={battleStatus}
                             showHitMarker={(col: number, row: number) => {
                                 const explosionX = opponentBoardX + (col * shipSize) + shipSize / 2
                                 const explosionY = boardY + (row * shipSize) + shipSize / 2
