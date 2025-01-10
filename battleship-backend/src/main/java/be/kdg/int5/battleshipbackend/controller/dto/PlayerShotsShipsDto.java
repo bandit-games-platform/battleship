@@ -13,6 +13,8 @@ public class PlayerShotsShipsDto {
     private List<PlayerShipDto> sunkOpponentsShips;
     private List<ShotCoordinateDto> shotsOnOpponentShips;
 
+    private UUID turnOf;
+
     public PlayerShotsShipsDto(
             IdentityDto identity,
             List<PlayerShipDto> ourAliveShips,
@@ -20,7 +22,8 @@ public class PlayerShotsShipsDto {
             List<ShotCoordinateDto> shotsOnOurShips,
             int opponentAliveShips,
             List<PlayerShipDto> sunkOpponentsShips,
-            List<ShotCoordinateDto> shotsOnOpponentShips
+            List<ShotCoordinateDto> shotsOnOpponentShips,
+            UUID turnOf
     ) {
         this.identity = identity;
         this.ourAliveShips = ourAliveShips;
@@ -29,6 +32,7 @@ public class PlayerShotsShipsDto {
         this.opponentAliveShips = opponentAliveShips;
         this.sunkOpponentsShips = sunkOpponentsShips;
         this.shotsOnOpponentShips = shotsOnOpponentShips;
+        this.turnOf = turnOf;
     }
 
     public IdentityDto getIdentity() {
@@ -87,6 +91,13 @@ public class PlayerShotsShipsDto {
         this.shotsOnOpponentShips = shotsOnOpponentShips;
     }
 
+    public UUID getTurnOf() {
+        return turnOf;
+    }
+
+    public void setTurnOf(UUID turnOf) {
+        this.turnOf = turnOf;
+    }
 
     public record PlayerShipDto (
             String shipType,

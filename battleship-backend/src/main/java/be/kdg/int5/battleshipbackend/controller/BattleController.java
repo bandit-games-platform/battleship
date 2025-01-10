@@ -67,7 +67,8 @@ public class BattleController {
                 shotsOnOurShips,
                 opponent.getBoard().getAliveShips().size(),
                 opponentSunkShips,
-                shotsWeTook
+                shotsWeTook,
+                lobby.playersTurn().uuid()
         );
 
         return ResponseEntity.ok(playerShotsShipsDto);
