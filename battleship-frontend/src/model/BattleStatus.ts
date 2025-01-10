@@ -10,4 +10,6 @@ export type BattleStatus = {
     opponentAliveShips: number
     sunkOpponentsShips: Ship[]
     shotsOnOpponentShips: {col: number, row: number, miss: boolean}[]
+
+    turnOf: string
 }

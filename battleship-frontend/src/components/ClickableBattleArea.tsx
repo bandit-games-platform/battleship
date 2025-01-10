@@ -9,6 +9,7 @@ import {ShotDto} from "../model/ShotDto.ts";
 import {IdentityDto} from "../model/IdentityDto.ts";
 import {useQueryClient} from "@tanstack/react-query";
 import {ThemeContext} from "../context/ThemeContext.ts";
+import {BattleStatus} from "../model/BattleStatus.ts";
 
 interface ClickableBattleAreaProps {
     pos: {
@@ -18,11 +19,12 @@ interface ClickableBattleAreaProps {
     size: number
     squareSize: number
     lobby: Lobby
+    battleStatus: BattleStatus
     showHitMarker: (col: number, row: number) => void
     showMissMarker: (col: number, row: number) => void
 }
 
-export function ClickableBattleArea({pos, size, squareSize, lobby, showHitMarker, showMissMarker}: ClickableBattleAreaProps) {
+export function ClickableBattleArea({pos, size, squareSize, lobby, showHitMarker, showMissMarker, battleStatus}: ClickableBattleAreaProps) {
     const {app, canvasSize} = useContext(AppContext);
     const {theme} = useContext(ThemeContext);
     const {playerId} = useContext(IdentityContext);
@@ -31,8 +33,6 @@ export function ClickableBattleArea({pos, size, squareSize, lobby, showHitMarker
 
     useEffect(() => {
         const submitShot = async (col: number, row: number) => {
-            console.log("Shooting at col " + col + " row " + row);
-
             const identity: IdentityDto = {lobbyId: lobby.lobbyId, playerId};
             const dto: ShotDto = {identity, column: col, row};
             const result = await shootShot(dto);
@@ -62,7 +62,7 @@ export function ClickableBattleArea({pos, size, squareSize, lobby, showHitMarker
             clickableArea.hitArea = new PIXI.Rectangle(pos.x, pos.y, size, size);
 
             const clickBoard = (event: FederatedPointerEvent) => {
-                if (lobby.turnOf != playerId || shotPending) {
+                if (battleStatus.turnOf != playerId || shotPending) {
                     return;
                 }
 
@@ -88,6 +88,7 @@ export function ClickableBattleArea({pos, size, squareSize, lobby, showHitMarker
                 confirmationBox.endFill();
                 confirmationBox.x = canvasSize.width / 2 - 400 / 2;
                 confirmationBox.y = canvasSize.height / 2 - 200 / 2;
+                confirmationBox.eventMode = 'static';
 
                 const columnLetter = String.fromCharCode(65 + col);
                 const confirmText = new PIXI.Text("Do you want to shoot at: " + columnLetter + (row + 1) + "?", { fontSize: 24, fill: '#ffffff' });
@@ -136,8 +137,6 @@ export function ClickableBattleArea({pos, size, squareSize, lobby, showHitMarker
                 confirmationBox.addChild(buttonCancel);
 
                 app.stage.addChild(confirmationBox);
-
-                console.log("Clicked col: " + col + " row: " + row)
             }
 
             clickableArea.eventMode = 'static';
@@ -154,7 +153,7 @@ export function ClickableBattleArea({pos, size, squareSize, lobby, showHitMarker
                 clickableArea.destroy(true);
             }
         }
-    }, [app, pos, size, squareSize, canvasSize, lobby.turnOf, playerId, lobby.lobbyId, shootShot, queryClient, showHitMarker, showMissMarker, shotPending, theme.sounds.hit, theme.sounds.miss]);
+    }, [app, pos, size, squareSize, canvasSize, battleStatus.turnOf, playerId, lobby.lobbyId, shootShot, queryClient, showHitMarker, showMissMarker, shotPending, theme.sounds.hit, theme.sounds.miss]);
 
     return null;
 }

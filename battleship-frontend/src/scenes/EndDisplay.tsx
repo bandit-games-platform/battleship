@@ -134,7 +134,7 @@ export function EndDisplay({setScene}: EndDisplayProps) {
                 resultSign.destroy(true);
             };
         }
-    }, [app, canvasSize, error, lobbyId, playerId, ready, readyToggle, setScene, stats, theme.sounds.defeat_sound, theme.sounds.victory_sound]);
+    }, [app, canvasSize, error, lobbyId, playerId, ready, readyToggle, setScene, soundPlayed, stats, theme.sounds]);
 
     return null;
 }
