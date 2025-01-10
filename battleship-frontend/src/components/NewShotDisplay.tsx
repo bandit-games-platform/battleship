@@ -19,6 +19,7 @@ export function NewShotDisplay({shot, onDisplayComplete}: NewShotDisplayProps) {
             shotAtBox.endFill();
             shotAtBox.x = canvasSize.width / 2 - 400 / 2;
             shotAtBox.y = canvasSize.height / 2 - 200 / 2;
+            shotAtBox.eventMode = 'static';
 
             const columnLetter = String.fromCharCode(65 + shot.col);
             let displayText = "Captain! We've been shot at in " + columnLetter + (shot.row + 1) + "!\n"

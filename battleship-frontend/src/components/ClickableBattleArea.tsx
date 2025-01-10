@@ -88,6 +88,7 @@ export function ClickableBattleArea({pos, size, squareSize, lobby, showHitMarker
                 confirmationBox.endFill();
                 confirmationBox.x = canvasSize.width / 2 - 400 / 2;
                 confirmationBox.y = canvasSize.height / 2 - 200 / 2;
+                confirmationBox.eventMode = 'static';
 
                 const columnLetter = String.fromCharCode(65 + col);
                 const confirmText = new PIXI.Text("Do you want to shoot at: " + columnLetter + (row + 1) + "?", { fontSize: 24, fill: '#ffffff' });
