@@ -246,6 +246,38 @@ export function Battle({setScene}: BattleProps) {
     const yourBoardX = boardMargin
     const opponentBoardX = canvasSize.width - (boardSize + boardMargin);
 
+    useEffect(() => {
+        const playAudio = async (miss: boolean) => {
+            if (miss) {
+                const missAudio = new Audio(theme.sounds.miss);
+                await missAudio.play();
+                missAudio.remove();
+            } else {
+                const hitAudio = new Audio(theme.sounds.hit);
+                await hitAudio.play();
+                hitAudio.remove();
+            }
+        }
+
+        if (newHits) {
+            newHits.forEach((shot) => {
+                if (shot.miss) {
+                    playAudio(true);
+                    const splashX = yourBoardX + (shot.col * shipSize) + shipSize / 2;
+                    const splashY = boardY + (shot.row * shipSize) + shipSize / 2;
+                    setSplashPosition({col: splashX, row: splashY});
+                    setShowSplash(true);
+                } else {
+                    playAudio(false);
+                    const explosionX = yourBoardX + (shot.col * shipSize) + shipSize / 2;
+                    const explosionY = boardY + (shot.row * shipSize) + shipSize / 2;
+                    setExplosionPosition({col: explosionX, row: explosionY});
+                    setShowExplosion(true);
+                }
+            });
+        }
+    }, [boardY, newHits, shipSize, theme.sounds, yourBoardX]);
+
     return (
         <>
             <BattleRenderer
