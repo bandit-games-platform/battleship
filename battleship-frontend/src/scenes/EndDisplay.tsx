@@ -8,6 +8,7 @@ import {StaticShip} from "../components/StaticShip.tsx";
 import {ShotMarker} from "../components/ShotMarker.tsx";
 import {BoardTextRenderer} from "../components/endStage/BoardTextRenderer.tsx";
 import {EndRenderer} from "../components/endStage/EndRenderer.tsx";
+import {useQueryClient} from "@tanstack/react-query";
 
 interface EndDisplayProps {
     setScene: (scene: string) => void
@@ -17,6 +18,7 @@ export function EndDisplay({setScene}: EndDisplayProps) {
     const {lobbyId, playerId} = useContext(IdentityContext);
     const {canvasSize} = useContext(AppContext);
     const {lobby} = useGetLobbyState(lobbyId);
+    const queryClient = useQueryClient();
     const {stats} = useEndStats(lobbyId? lobbyId: "");
     const [soundPlayed, setSoundPlayed] = useState(false);
 
@@ -26,10 +28,11 @@ export function EndDisplay({setScene}: EndDisplayProps) {
     useEffect(() => {
         if (lobby) {
             if (lobby.stage === "queueing") {
+                queryClient.removeQueries({queryKey: ['lobby-end', lobbyId]});
                 setScene("lobby_queue");
             }
         }
-    }, [lobby, setScene])
+    }, [lobby, lobbyId, queryClient, setScene])
 
 
     const boardMargin = 10;
