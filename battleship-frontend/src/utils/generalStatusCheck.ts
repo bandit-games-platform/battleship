@@ -13,17 +13,20 @@ interface GeneralStatusCheckProps {
 
 export function GeneralStatusCheck ({object, objectLoading, objectError, objectString, app}: GeneralStatusCheckProps) {
     if (objectLoading || !object) {
-        const onTick = [
-            LoadingIcon(app, new Point((app.view.width / 2) - 50, (app.view.height / 2) - 50)),
-        ];
+        const { update, container } = LoadingIcon(
+            app,
+            new Point(app.view.width / 2 - 50, app.view.height / 2 - 50)
+        );
 
         const tickerCallback = (delta: number) => {
-            onTick.forEach((cb) => cb(delta));
+            update(delta);
         };
+
         app.ticker.add(tickerCallback);
 
         return () => {
             app.ticker.remove(tickerCallback);
+            container.destroy()
         };
     }
 
