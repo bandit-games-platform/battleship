@@ -238,7 +238,7 @@ export function Battle({setScene}: BattleProps) {
         }
     }, [battleStatus, previousHitsOnFleet])
 
-    const boardMargin = 20;
+    const boardMargin = 30;
     const boardSize = (canvasSize.width / 2) - boardMargin * 3;
     const shipSize = boardSize / BOARD_CELLS;
 

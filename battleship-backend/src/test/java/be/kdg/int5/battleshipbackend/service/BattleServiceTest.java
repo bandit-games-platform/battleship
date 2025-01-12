@@ -29,7 +29,7 @@ class BattleServiceTest extends BaseTest {
         // Arrange
 
         // Lobby in battle state
-        Lobby goodLobby = new Lobby(GOOD_LOBBY, PLAYER_ONE, Arrays.asList(PLAYER_ONE, PLAYER_TWO));
+        Lobby goodLobby = new Lobby(GOOD_LOBBY, PLAYER_ONE, 1, Arrays.asList(PLAYER_ONE, PLAYER_TWO));
         goodLobby.getPlayers().forEach(p -> p.setReady(true));
         goodLobby.setFirstToGo(PLAYER_ONE);
         repository.save(goodLobby);
@@ -37,7 +37,7 @@ class BattleServiceTest extends BaseTest {
         arrangeShipsService.submitShipArrangement(GOOD_LOBBY, PLAYER_TWO, GOOD_ARRANGEMENT);
 
         // Lobby in arranging state
-        Lobby badLobby = new Lobby(BAD_LOBBY, PLAYER_ONE, Arrays.asList(PLAYER_ONE, PLAYER_TWO));
+        Lobby badLobby = new Lobby(BAD_LOBBY, PLAYER_ONE, 1, Arrays.asList(PLAYER_ONE, PLAYER_TWO));
         badLobby.getPlayers().forEach(p -> p.setReady(true));
         repository.save(badLobby);
     }

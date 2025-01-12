@@ -15,12 +15,12 @@ interface MainMenuProps {
 
 export function MainMenu({ setScene, setLobbyId }: MainMenuProps) {
     const {app, canvasSize} = useContext(AppContext);
-    const {theme} = useContext(ThemeContext);
+    const {theme, themeIndex} = useContext(ThemeContext);
     const {playerId} = useContext(IdentityContext);
     const [settingsOpen, setSettingsOpen] = useState<boolean>(false);
 
     const {createLobby, isPending: creatingLobby, isError: failedToCreateLobby} = useCreateLobby();
-    
+
     const animTime = useRef<number>(0);
     const [bgBaseSprite, setBgBaseSprite] = useState<Sprite>();
     const [bgOverlayAnim, setBgOverlayAnim] = useState<AnimatedSprite>();
@@ -154,8 +154,8 @@ export function MainMenu({ setScene, setLobbyId }: MainMenuProps) {
     useEffect(() => {
         const handleStartGame = () => {
             if (creatingLobby) return;
-            
-            createLobby(playerId, {
+
+            createLobby({ownerId: playerId, themeIndex}, {
                 onSuccess: (newLobby) => {
                     setLobbyId(newLobby.lobbyId);
                     setScene('lobby_queue');
@@ -166,7 +166,7 @@ export function MainMenu({ setScene, setLobbyId }: MainMenuProps) {
         const handleSettings = () => {
             setSettingsOpen(!settingsOpen);
         }
-        
+
         if (app && app.stage) {
             // Create a start game button on the canvas
             const buttonStart = new PIXI.Graphics();
@@ -207,7 +207,7 @@ export function MainMenu({ setScene, setLobbyId }: MainMenuProps) {
                 buttonSettings.destroy(true);
             };
         }
-    }, [app, canvasSize, createLobby, creatingLobby, failedToCreateLobby, playerId, setLobbyId, setScene, settingsOpen, buttonWidth, buttonHeight, firstButtonY, buttonFontSize]);
+    }, [app, canvasSize, createLobby, creatingLobby, failedToCreateLobby, playerId, setLobbyId, setScene, settingsOpen, buttonWidth, buttonHeight, firstButtonY, buttonFontSize, themeIndex]);
 
     return (
         <>

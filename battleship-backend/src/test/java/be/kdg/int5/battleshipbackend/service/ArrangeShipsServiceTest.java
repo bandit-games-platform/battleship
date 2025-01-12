@@ -25,12 +25,12 @@ class ArrangeShipsServiceTest extends BaseTest {
         // Arrange
 
         // Lobby in arranging state
-        Lobby goodLobby = new Lobby(GOOD_LOBBY, PLAYER_ONE, Arrays.asList(PLAYER_ONE, PLAYER_TWO));
+        Lobby goodLobby = new Lobby(GOOD_LOBBY, PLAYER_ONE, 1, Arrays.asList(PLAYER_ONE, PLAYER_TWO));
         goodLobby.getPlayers().forEach(p -> p.setReady(true));
         repository.save(goodLobby);
 
         // Lobby that is still queueing
-        Lobby badLobby = new Lobby(BAD_LOBBY, PLAYER_ONE, List.of(PLAYER_ONE));
+        Lobby badLobby = new Lobby(BAD_LOBBY, PLAYER_ONE, 1, List.of(PLAYER_ONE));
         badLobby.getPlayers().forEach(p -> p.setReady(true));
         repository.save(badLobby);
     }

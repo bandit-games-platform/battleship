@@ -7,6 +7,7 @@ import {Lobby} from "../model/Lobby.ts";
 import {useReadyToggle} from "../hooks/useReadyToggle.ts";
 import {IdentityContext} from "../context/IdentityContext.ts";
 import {GeneralStatusCheck} from "../utils/generalStatusCheck.ts";
+import {ThemeContext} from "../context/ThemeContext.ts";
 
 interface LobbyQueueProps {
     setScene: (scene: string) => void
@@ -15,6 +16,7 @@ interface LobbyQueueProps {
 export function LobbyQueue({setScene}: LobbyQueueProps) {
     const {lobbyId, playerId} = useContext(IdentityContext);
     const {app, canvasSize} = useContext(AppContext);
+    const {setTheme} = useContext(ThemeContext);
     const {lobby, isLoading: lobbyLoading, isError: lobbyError} = useGetLobbyState(lobbyId);
     const {readyToggle, isPending: readyPending, isError: readyError, lobby: updatedLobby} = useReadyToggle();
     const [currentLobby, setCurrentLobby] = useState<Lobby | undefined>()
@@ -22,13 +24,14 @@ export function LobbyQueue({setScene}: LobbyQueueProps) {
     useEffect(() => {
         console.log(lobby)
         if (lobby) {
-            setCurrentLobby(lobby)
+            setCurrentLobby(lobby);
+            setTheme(lobby.themeIndex);
 
             if (lobby.stage === "arranging") {
                 setScene("arrange_ships");
             }
         }
-    }, [lobby, setScene])
+    }, [lobby, setScene, setTheme])
 
     useEffect(() => {
         const toggleReadiness = () => {
