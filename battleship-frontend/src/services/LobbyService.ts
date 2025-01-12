@@ -2,9 +2,10 @@ import axios from 'axios';
 import {Lobby} from "../model/Lobby.ts";
 import {EndStats} from "../model/EndStats.ts";
 
-export async function createLobby(ownerId: string) {
+export async function createLobby(ownerId: string, themeIndex: number) {
     const {data: newLobby} = await axios.post<Lobby>("/lobby", {
-        ownerId: ownerId
+        ownerId: ownerId,
+        themeIndex: themeIndex
     })
     return newLobby
 }
