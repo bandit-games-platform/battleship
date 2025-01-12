@@ -142,7 +142,7 @@ export const themes: BattleshipTheme[] = [
             }
         },
         sounds : {
-            hit: assets + "sounds/duck_hit.mp3",
+            hit: assets + "ducky/sounds/duck_hit.mp3",
             miss: assets + "sounds/miss_splash.mp3",
             battle_music: assets + "sounds/battle_music.mp3",
             victory_sound: assets + "sounds/victory_sound.mp3",
