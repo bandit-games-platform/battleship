@@ -37,7 +37,7 @@ public class LobbyController {
 
     @PostMapping
     public ResponseEntity<LoadLobbyDto> startNewLobby(@RequestBody @Valid CreateLobbyDto createLobbyDto) {
-        Lobby newLobby = lobbyService.startNewLobby(new PlayerId(createLobbyDto.getOwnerId()));
+        Lobby newLobby = lobbyService.startNewLobby(new PlayerId(createLobbyDto.getOwnerId()), createLobbyDto.getThemeIndex());
 
         if (newLobby == null) return new ResponseEntity<>(HttpStatus.CONFLICT);
 

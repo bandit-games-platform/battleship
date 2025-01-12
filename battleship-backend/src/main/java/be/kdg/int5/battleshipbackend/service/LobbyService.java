@@ -27,14 +27,15 @@ public class LobbyService {
         this.ctx = ctx;
     }
 
-    public Lobby startNewLobby(PlayerId ownerId) {
+    public Lobby startNewLobby(PlayerId ownerId, int themeIndex) {
         LobbyContext sdkLobby = sdk.createLobby(ctx, ownerId.uuid(), 2);
         LobbyId newLobbyId = new LobbyId(sdkLobby.lobbyId());
-        logger.info("New lobby for owner: {} was registered with platform with id: {}", ownerId, newLobbyId);
+        logger.info("New lobby for owner: {} was registered with platform with id: {}, theme {}", ownerId, newLobbyId, themeIndex);
 
         Lobby newLobby = new Lobby(
                 newLobbyId,
                 ownerId,
+                themeIndex,
                 new ArrayList<>()
         );
 
