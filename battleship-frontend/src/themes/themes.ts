@@ -122,7 +122,7 @@ export const themes: BattleshipTheme[] = [
             wave_anim: {
                 wave_function: t => 0.2 * Math.max(Math.sin(0.03*t), 0) * Math.sin(0.2*t) + 0.8 * Math.cos(0.02*t),
                 offset_amplitude: {
-                    background: 0.002,
+                    background: 0.001,
                     foreground: 0.001
                 }
             },
