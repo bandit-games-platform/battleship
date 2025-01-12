@@ -25,7 +25,7 @@ export function LoadingIcon(
 
     let phase = 0;
 
-    return (delta: number): void => {
+    const update = (delta: number): void => {
         // Update phase
         phase += delta / 60;
         phase %= Math.PI * 2;
@@ -37,4 +37,6 @@ export function LoadingIcon(
             ball.scale.set(Math.abs(sin * sin * sin * 0.5) + 0.5);
         });
     };
+
+    return { update, container };
 }
