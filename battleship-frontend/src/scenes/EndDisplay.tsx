@@ -45,8 +45,8 @@ export function EndDisplay({setScene}: EndDisplayProps) {
 
     return (
         <>
-            <Board pos={{x: yourBoardX, y: boardY}} size={boardSize}/>
-            <Board pos={{x: opponentBoardX, y: boardY}} size={boardSize}/>
+            <Board pos={{x: yourBoardX, y: boardY}} size={boardSize} showCoordinateLabels={false} />
+            <Board pos={{x: opponentBoardX, y: boardY}} size={boardSize} showCoordinateLabels={false} />
 
             {stats && (
                 <>

@@ -7,14 +7,16 @@ import java.util.stream.Collectors;
 public class Lobby {
     private final LobbyId id;
     private PlayerId ownerId;
+    private int themeIndex;
     private List<Player> players;
     private PlayerId firstToGo;
     private int turnNumber;
     private LocalDateTime battleStartTime = null;
 
-    public Lobby(LobbyId id, PlayerId ownerId, List<PlayerId> players) {
+    public Lobby(LobbyId id, PlayerId ownerId, int themeIndex, List<PlayerId> players) {
         this.id = id;
         this.ownerId = ownerId;
+        this.themeIndex = themeIndex;
         this.players = players.stream().map(Player::new).collect(Collectors.toList());
         this.turnNumber = 1;
     }
@@ -41,6 +43,10 @@ public class Lobby {
 
     public void setOwnerId(PlayerId ownerId) {
         this.ownerId = ownerId;
+    }
+
+    public int getThemeIndex() {
+        return themeIndex;
     }
 
     public PlayerId getFirstToGo() {

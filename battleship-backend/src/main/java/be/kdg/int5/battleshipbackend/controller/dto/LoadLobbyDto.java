@@ -9,6 +9,7 @@ import java.util.UUID;
 public class LoadLobbyDto {
     private UUID lobbyId;
     private UUID ownerId;
+    private int themeIndex;
     private List<LoadPlayerRecord> loadPlayerRecords;
 
     private String stage;
@@ -16,13 +17,14 @@ public class LoadLobbyDto {
     public LoadLobbyDto() {
     }
 
-    public LoadLobbyDto(UUID lobbyId, UUID ownerId, List<LoadPlayerRecord> loadPlayerRecords) {
-        this(lobbyId, ownerId, loadPlayerRecords, "queueing");
+    public LoadLobbyDto(UUID lobbyId, UUID ownerId, int themeIndex, List<LoadPlayerRecord> loadPlayerRecords) {
+        this(lobbyId, ownerId, themeIndex, loadPlayerRecords, "queueing");
     }
 
-    public LoadLobbyDto(UUID lobbyId, UUID ownerId, List<LoadPlayerRecord> loadPlayerRecords, String stage) {
+    public LoadLobbyDto(UUID lobbyId, UUID ownerId, int themeIndex, List<LoadPlayerRecord> loadPlayerRecords, String stage) {
         this.lobbyId = lobbyId;
         this.ownerId = ownerId;
+        this.themeIndex = themeIndex;
         this.loadPlayerRecords = loadPlayerRecords;
         this.stage = stage;
     }
@@ -31,6 +33,7 @@ public class LoadLobbyDto {
         return new LoadLobbyDto(
                 domain.getId().uuid(),
                 domain.getOwnerId().uuid(),
+                domain.getThemeIndex(),
                 domain.getPlayers()
                         .stream()
                         .map(player -> new LoadPlayerRecord(player.getId().uuid(), player.isReady()))
@@ -45,6 +48,10 @@ public class LoadLobbyDto {
 
     public UUID getOwnerId() {
         return ownerId;
+    }
+
+    public int getThemeIndex() {
+        return themeIndex;
     }
 
     public List<LoadPlayerRecord> getPlayers() {

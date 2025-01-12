@@ -24,11 +24,18 @@ export function ThemeProvider({children}: ThemeProviderProps) {
         setThemeIndex(0);
     }
 
+    const setThatTheme = (index: number) => {
+        console.log("Theme was: " + index)
+        setThemeIndex(index);
+    }
+
     return (
         <ThemeContext.Provider value={{
             theme: themes[themeIndex],
+            themeIndex: themeIndex,
             prevTheme,
-            nextTheme
+            nextTheme,
+            setTheme: setThatTheme
         }}>
             {children}
         </ThemeContext.Provider>

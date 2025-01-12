@@ -183,7 +183,7 @@ export function ArrangeShips({setScene}: ArrangeShipsProps) {
                 boardSize={boardSize}
                 handleAcceptFormation={handleAcceptFormation}
             />
-            <Board pos={{x: boardX, y: boardMargin}} size={boardSize} />
+            <Board pos={{x: boardX, y: boardMargin}} size={boardSize} showCoordinateLabels={false} />
 
             {Object.values(ShipType).map((shipType, index) => (
                 <DraggableShip shipType={shipType} size={shipSize} checkSnapPoint={checkSnapPoint} startPos={{
